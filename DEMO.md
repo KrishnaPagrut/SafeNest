@@ -1,4 +1,14 @@
-# Demo video script (target 2:30, hard max 3:00)
+# Demo video script
+
+**Canonical cut: `video/`** (HyperFrames project, 1:41, 1920×1080, local voiceover). Re-render with
+`cd video && node build.mjs && npx hyperframes render`. The submission form allows 3:00 at most.
+v1 is recorded from the built-in sample walkthrough, and its end card says so. Re-cut it once real footage and a
+cached live run exist.
+
+The longer script below is the plan for that re-cut. The 0:00–0:15 hallway hook is optional and only goes in if
+real phone footage is filmed.
+
+## Long-form script (target 2:30, hard max 3:00)
 
 Recorded at 1920×1080 from a cached run (`make demo`), so there's no network or latency risk. Narration in quotes.
 
