@@ -4,6 +4,7 @@ import { api } from '../api'
 import { FixPreviewDialog } from '../components/FixPreviewDialog'
 import { FrameViewer } from '../components/FrameViewer'
 import { Lanes } from '../components/Lanes'
+import { TrackPlayer } from '../components/TrackPlayer'
 import { emptyStages, StageProgress, type StageState } from '../components/StageProgress'
 import type { Hazard, Scan } from '../types'
 
@@ -14,12 +15,13 @@ export function Review() {
   const [stages, setStages] = useState<StageState>(emptyStages)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [preview, setPreview] = useState<Hazard | null>(null)
+  const [tracking, setTracking] = useState<Hazard | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [replay, setReplay] = useState(0)
 
   // Load the scan shell first (frames, video), then let the event stream fill the lanes in.
   useEffect(() => {
-    setHazards([]); setStages(emptyStages()); setSelectedId(null); setError(null)
+    setHazards([]); setStages(emptyStages()); setSelectedId(null); setError(null); setTracking(null)
     let alive = true
     api.getScan(scanId).then((s) => alive && setScan({ ...s, hazards: [] })).catch((e) => alive && setError(e.message))
     const stop = api.events(scanId, (e) => {
@@ -55,7 +57,8 @@ export function Review() {
   }, [scanId, replay])
 
   const selected = useMemo(() => hazards.find((h) => h.hazard_id === selectedId) ?? null, [hazards, selectedId])
-  const onSelect = useCallback((h: Hazard) => setSelectedId((cur) => (cur === h.hazard_id ? null : h.hazard_id)), [])
+  const onSelect = useCallback((h: Hazard) => { setTracking(null); setSelectedId((cur) => (cur === h.hazard_id ? null : h.hazard_id)) }, [])
+  const onTrack = useCallback((h: Hazard) => { setSelectedId(h.hazard_id); setTracking(h) }, [])
   const done = scan?.status === 'complete' && hazards.every((h) => h.lane !== 'pending')
   const counts = {
     verified: hazards.filter((h) => h.lane === 'verified').length,
@@ -88,7 +91,7 @@ export function Review() {
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] items-start">
         <div className="lg:sticky lg:top-6 grid gap-3">
-          <FrameViewer scan={scan} selected={selected} />
+          {tracking ? <TrackPlayer scan={scan} hazard={tracking} onClose={() => setTracking(null)} /> : <FrameViewer scan={scan} selected={selected} />}
           {done && (
             <p className="text-base text-muted">
               {counts.verified} hazard{counts.verified === 1 ? '' : 's'} confirmed on camera
@@ -96,7 +99,7 @@ export function Review() {
             </p>
           )}
         </div>
-        <Lanes hazards={hazards} selectedId={selectedId} onSelect={onSelect} onFixPreview={setPreview} />
+        <Lanes hazards={hazards} selectedId={selectedId} onSelect={onSelect} onFixPreview={setPreview} onTrack={onTrack} />
       </div>
 
       {preview && <FixPreviewDialog hazard={preview} onClose={() => setPreview(null)} />}

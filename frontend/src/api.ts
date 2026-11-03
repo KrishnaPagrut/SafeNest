@@ -1,5 +1,5 @@
 import { mock } from './mock'
-import type { Comparison, FixPreview, Health, Scan, ScanEvent, ScanSummary } from './types'
+import type { Comparison, FixPreview, Health, Scan, ScanEvent, ScanSummary, Track } from './types'
 
 async function json<T>(input: string, init?: RequestInit): Promise<T> {
   const res = await fetch(input, init)
@@ -52,6 +52,11 @@ export const api = {
       method: 'POST', headers: { 'content-type': 'application/json' },
       body: JSON.stringify(instruction ? { instruction } : {}),
     })
+  },
+
+  async track(hazardId: string): Promise<Track> {
+    if (hazardId.startsWith('hz_m') || hazardId.startsWith('hz_a')) return mock.track(hazardId)
+    return json<Track>(`/api/hazards/${hazardId}/track`, { method: 'POST' })
   },
 
   async compare(afterId: string, beforeId: string): Promise<Comparison> {

@@ -6,6 +6,7 @@ interface Props {
   selectedId: string | null
   onSelect: (h: Hazard) => void
   onFixPreview: (h: Hazard) => void
+  onTrack: (h: Hazard) => void
 }
 
 const LANES: { lane: Lane; title: string; hint: string; color: string }[] = [
@@ -14,7 +15,7 @@ const LANES: { lane: Lane; title: string; hint: string; color: string }[] = [
   { lane: 'needs_check', title: 'Check in person', hint: 'Something missing. A camera cannot prove an absence.', color: 'bg-check' },
 ]
 
-export function Lanes({ hazards, selectedId, onSelect, onFixPreview }: Props) {
+export function Lanes({ hazards, selectedId, onSelect, onFixPreview, onTrack }: Props) {
   const pending = hazards.filter((h) => h.lane === 'pending')
   return (
     <div className="grid gap-4 md:grid-cols-3">
@@ -30,7 +31,7 @@ export function Lanes({ hazards, selectedId, onSelect, onFixPreview }: Props) {
             <p className="text-base text-muted mb-3">{hint}</p>
             <div className="flex flex-col gap-2">
               {items.map((h) => (
-                <HazardCard key={h.hazard_id} hazard={h} selected={h.hazard_id === selectedId} onSelect={onSelect} onFixPreview={onFixPreview} />
+                <HazardCard key={h.hazard_id} hazard={h} selected={h.hazard_id === selectedId} onSelect={onSelect} onFixPreview={onFixPreview} onTrack={onTrack} />
               ))}
               {items.length === 0 && pending.length === 0 && <div className="text-muted text-base py-4">Nothing here.</div>}
             </div>

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import type { Evidence, Frame, Lane } from '../types'
 
+type Drawable = Pick<Evidence, 'box' | 'mask_path'>
+
 export type MaskTone = Lane | 'still' | 'none'
 
 const FILL: Record<MaskTone, string> = {
@@ -9,6 +11,29 @@ const FILL: Record<MaskTone, string> = {
 }
 const STROKE: Record<MaskTone, string> = {
   verified: '#e5484d', needs_check: '#8fb0cf', pending: '#f2ece2', rejected: '#a79d8e', still: '#e0a33b', none: 'transparent',
+}
+
+// Draws masks given in frame pixels (fw × fh) onto a canvas of CSS size (w × h), letterboxed like object-contain.
+export function drawMasks(ctx: CanvasRenderingContext2D, items: Drawable[], tone: MaskTone, fw: number, fh: number, w: number, h: number) {
+  if (items.length === 0 || tone === 'none') return
+  const s = Math.min(w / fw, h / fh)
+  const ox = (w - fw * s) / 2, oy = (h - fh * s) / 2
+  ctx.save()
+  ctx.translate(ox, oy); ctx.scale(s, s)
+  for (const ev of items) {
+    const path = new Path2D(ev.mask_path)
+    ctx.fillStyle = FILL[tone]
+    ctx.fill(path, 'evenodd')
+    ctx.setLineDash([])
+    ctx.lineWidth = 3 / s
+    ctx.strokeStyle = STROKE[tone]
+    ctx.stroke(path)
+    ctx.setLineDash([8 / s, 6 / s])
+    ctx.lineWidth = 1.5 / s
+    const [x1, y1, x2, y2] = ev.box
+    ctx.strokeRect(x1, y1, x2 - x1, y2 - y1)
+  }
+  ctx.restore()
 }
 
 interface Props {
@@ -43,25 +68,8 @@ export function MaskedFrame({ frame, evidence, tone = 'verified', stamp, caption
     const ctx = c.getContext('2d')!
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     ctx.clearRect(0, 0, size.w, size.h)
-    if (!frame || evidence.length === 0 || tone === 'none') return
-    const s = Math.min(size.w / frame.w, size.h / frame.h)
-    const ox = (size.w - frame.w * s) / 2, oy = (size.h - frame.h * s) / 2
-    ctx.save()
-    ctx.translate(ox, oy); ctx.scale(s, s)
-    for (const ev of evidence) {
-      const path = new Path2D(ev.mask_path)
-      ctx.fillStyle = FILL[tone]
-      ctx.fill(path, 'evenodd')
-      ctx.setLineDash([])
-      ctx.lineWidth = 3 / s
-      ctx.strokeStyle = STROKE[tone]
-      ctx.stroke(path)
-      ctx.setLineDash([8 / s, 6 / s])
-      ctx.lineWidth = 1.5 / s
-      const [x1, y1, x2, y2] = ev.box
-      ctx.strokeRect(x1, y1, x2 - x1, y2 - y1)
-    }
-    ctx.restore()
+    if (!frame) return
+    drawMasks(ctx, evidence, tone, frame.w, frame.h, size.w, size.h)
   }, [frame, evidence, tone, size])
 
   return (

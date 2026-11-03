@@ -37,7 +37,7 @@ export function App() {
                 Spend: ${(health.spent_usd ?? 0).toFixed(2)} of ${(health.budget_usd ?? 25).toFixed(0)} cap
                 {health.cache_only ? ' · serving from cache only' : ''}
               </span>
-              <span>Models: {health.model}, sam-3.1, muse-image-1.0</span>
+              <span>Models: {health.model || 'muse-spark-1.3'}, sam-3.1, muse-image-1.0</span>
               {!health.has_key && <span>No API key on the backend</span>}
             </>
           ) : (

@@ -6,11 +6,12 @@ interface Props {
   selected: boolean
   onSelect: (h: Hazard) => void
   onFixPreview?: (h: Hazard) => void
+  onTrack?: (h: Hazard) => void
 }
 
 const SEVERITY = { 3: 'Fix today', 2: 'Fix this week', 1: 'Worth fixing' } as const
 
-export function HazardCard({ hazard: h, selected, onSelect, onFixPreview }: Props) {
+export function HazardCard({ hazard: h, selected, onSelect, onFixPreview, onTrack }: Props) {
   const rejected = h.lane === 'rejected'
   const pending = h.lane === 'pending'
   return (
@@ -50,15 +51,20 @@ export function HazardCard({ hazard: h, selected, onSelect, onFixPreview }: Prop
         <div className="mt-3 border-t border-line pt-3 text-base">
           <p>{h.rationale}</p>
           <p className="mt-1 text-muted">{h.fix.action} · ${h.fix.est_cost_usd[0]}–{h.fix.est_cost_usd[1]}</p>
-          {onFixPreview && (
-            <button
-              type="button"
-              onClick={(e) => { e.stopPropagation(); onFixPreview(h) }}
-              className="mt-3 rounded-md bg-text text-ink px-3 py-1.5 font-medium hover:opacity-90"
-            >
-              Show it fixed
-            </button>
-          )}
+          <div className="mt-3 flex flex-wrap gap-2">
+            {onTrack && h.evidence.length > 0 && (
+              <button type="button" onClick={(e) => { e.stopPropagation(); onTrack(h) }}
+                className="rounded-md border border-line px-3 py-1.5 font-medium hover:bg-surface">
+                Track in video
+              </button>
+            )}
+            {onFixPreview && (
+              <button type="button" onClick={(e) => { e.stopPropagation(); onFixPreview(h) }}
+                className="rounded-md bg-text text-ink px-3 py-1.5 font-medium hover:opacity-90">
+                Show it fixed
+              </button>
+            )}
+          </div>
         </div>
       )}
       {h.lane === 'needs_check' && selected && (

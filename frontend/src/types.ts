@@ -69,6 +69,9 @@ export interface Comparison {
 
 export interface FixPreview { hazard_id: string; before_url: string; after_url: string; instruction: string }
 
+export interface TrackEntry { frame_index: number; t_sec: number; box: [number, number, number, number]; mask_path: string; score: number | null }
+export interface Track { hazard_id: string; phrase: string; fps: number; frames: number; objects: { object_id: string; track: TrackEntry[] }[] }
+
 export type Stage = 'frames' | 'spotter' | 'grounder' | 'critic'
 
 export type ScanEvent =

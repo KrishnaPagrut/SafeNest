@@ -1,6 +1,6 @@
 // In-memory stand-in for the backend. Any scan_id starting with "mock_" is served from here,
 // so the live backend and the sample walkthrough can coexist. Shapes follow CONTRACT.md.
-import type { Comparison, FixPreview, Frame, Hazard, Scan, ScanEvent, ScanSummary } from './types'
+import type { Comparison, FixPreview, Frame, Hazard, Scan, ScanEvent, ScanSummary, Track, TrackEntry } from './types'
 
 const W = 1280, H = 720
 
@@ -139,6 +139,22 @@ export const mock = {
       hazard_id: hazardId, before_url: frames[h.frame_idx].url, after_url: frameSvg(h.frame_idx),
       instruction: `${h.fix.action}; keep everything else identical.`,
     }
+  },
+
+  // Fakes SAM video tracking: the first evidence box drifts for 3 s around the hazard's timestamp at 10 fps.
+  async track(hazardId: string): Promise<Track> {
+    await new Promise((r) => setTimeout(r, 2200))
+    const h = Object.values(scans).flatMap((s) => s.hazards).find((x) => x.hazard_id === hazardId)!
+    const ev = h.evidence[0]
+    const [x1, y1, x2, y2] = ev.box
+    const track: TrackEntry[] = []
+    for (let i = 0; i <= 30; i++) {
+      const t = Math.max(0, ev.t_sec - 1.5) + i / 10
+      const dx = Math.round(Math.sin(i / 5) * 40), dy = Math.round(Math.cos(i / 7) * 18)
+      track.push({ frame_index: Math.round(t * 10), t_sec: t, box: [x1 + dx, y1 + dy, x2 + dx, y2 + dy],
+        mask_path: rect(x1 + dx + 8, y1 + dy + 6, x2 + dx - 8, y2 + dy - 6), score: 0.9 - i * 0.004 })
+    }
+    return { hazard_id: hazardId, phrase: h.phrase, fps: 10, frames: 240, objects: [{ object_id: '0', track }] }
   },
 
   compare(afterId: string, beforeId: string): Comparison {
