@@ -9,7 +9,7 @@ import time
 from openai import APIStatusError, AsyncOpenAI
 
 from app import config
-from app.llm import cache
+from app.llm import budget, cache
 
 log = logging.getLogger("safenest.llm")
 
@@ -64,6 +64,7 @@ async def spark_json(
         return json.loads(hit)
     if config.CACHE_ONLY:
         raise CacheMiss(f"spark:{name}")
+    budget.check()
     t0 = time.monotonic()
 
     async def call():
@@ -77,6 +78,7 @@ async def spark_json(
         )
 
     resp = await _with_retry(call)
+    budget.record("spark", budget.spark_cost(getattr(resp, "usage", None)))
     out = json.loads(resp.output_text)
     log.info("spark %s %.1fs", name, time.monotonic() - t0)
     cache.put(key, json.dumps(out).encode())
@@ -95,6 +97,7 @@ async def sam_image(phrase: str, jpeg: bytes) -> str:
         return hit.decode()
     if config.CACHE_ONLY:
         raise CacheMiss(f"sam:{phrase}")
+    budget.check()
 
     async def call():
         return await client().responses.create(
@@ -113,6 +116,7 @@ async def sam_image(phrase: str, jpeg: bytes) -> str:
         )
 
     resp = await _with_retry(call)
+    budget.record("sam", budget.SAM_PER_IMAGE)
     text = resp.output_text or ""
     cache.put(key, text.encode())
     return text
@@ -126,6 +130,7 @@ async def image_edit(jpeg: bytes, prompt: str) -> bytes:
         return hit
     if config.CACHE_ONLY:
         raise CacheMiss("image_edit")
+    budget.check()
 
     async def call():
         return await client().images.edit(
@@ -144,6 +149,7 @@ async def image_edit(jpeg: bytes, prompt: str) -> bytes:
         )
 
     resp = await _with_retry(call)
+    budget.record("image", budget.IMAGE_PER_IMAGE)
     out = base64.b64decode(resp.data[0].b64_json)
     cache.put(key, out)
     return out

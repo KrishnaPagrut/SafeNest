@@ -11,6 +11,7 @@ from pydantic import BaseModel
 from sse_starlette.sse import EventSourceResponse
 
 from app import config, store
+from app.llm import budget
 from app.pipeline import compare as compare_mod
 from app.pipeline import fix_preview, report
 from app.pipeline.run import run_scan
@@ -40,6 +41,8 @@ def health():
         "cache_only": config.CACHE_ONLY,
         "model": config.SPARK_MODEL,
         "has_key": bool(config.API_KEY),
+        "spent_usd": round(budget.spent(), 4),
+        "budget_usd": config.BUDGET_USD,
     }
 
 

@@ -17,6 +17,8 @@ SPARK_MODEL = os.environ.get("SAFENEST_SPARK_MODEL", "muse-spark-1.3")
 SAM_MODEL = os.environ.get("SAFENEST_SAM_MODEL", "sam-3.1")
 IMAGE_MODEL = os.environ.get("SAFENEST_IMAGE_MODEL", "muse-image-1.0")
 CACHE_ONLY = os.environ.get("SAFENEST_CACHE_ONLY", "0") == "1"
+# Hard cap on live API spend (USD) — far below the $150 free hackathon credits, so nobody ever pays.
+BUDGET_USD = float(os.environ.get("SAFENEST_BUDGET_USD", "25"))
 REASONING_EFFORT = os.environ.get("SAFENEST_REASONING", "low")
 
 # Keyframe sampling: 1 fps keeps a 30 s walkthrough at ~30 frames, cheap for SAM ($2.50/1k images).
