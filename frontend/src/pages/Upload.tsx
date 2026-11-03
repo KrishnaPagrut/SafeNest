@@ -20,6 +20,9 @@ export function Upload() {
   }, [])
 
   const befores = scans.filter((s) => s.label === 'before' && !s.scan_id.startsWith('mock_'))
+  // The demo link prefers a real, completed walkthrough (replayed from cache); the built-in sample is the fallback.
+  const demo = befores.find((s) => s.status === 'complete') ?? null
+  const demoTo = demo ? `/review/${demo.scan_id}` : '/review/mock_before'
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
@@ -88,9 +91,18 @@ export function Upload() {
             <button type="submit" disabled={busy || !file} className="rounded-md bg-text text-ink px-4 py-2 font-medium disabled:opacity-50">
               {busy ? 'Uploading…' : 'Check this walkthrough'}
             </button>
-            <Link to="/review/mock_before" className="rounded-md border border-line px-4 py-2 hover:bg-surface-2">Try the sample walkthrough</Link>
           </div>
         </form>
+
+        <Link to={demoTo} className="mt-8 block max-w-xl rounded-lg border border-line bg-surface px-5 py-4 hover:bg-surface-2">
+          <div className="flex items-baseline justify-between gap-4">
+            <span className="text-xl font-medium">Try the sample walkthrough</span>
+            <span className="text-muted text-base">about 20 seconds</span>
+          </div>
+          <p className="mt-1 text-muted text-base">
+            {demo ? `Replays "${demo.title}" from cache, exactly as it ran.` : 'Watch eight claims get sorted into verified, rejected and check-in-person as the pipeline runs.'}
+          </p>
+        </Link>
       </section>
 
       <aside>

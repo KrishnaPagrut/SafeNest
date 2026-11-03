@@ -45,7 +45,7 @@ export function HazardCard({ hazard: h, selected, onSelect, onFixPreview, onTrac
         <p className="mt-2 text-text">SAM found 0 px for "{h.phrase}"</p>
       )}
       {h.critic_reason && (
-        <p className={['mt-2 text-base', rejected ? 'text-muted' : 'text-text'].join(' ')}>{h.critic_reason}</p>
+        <p className={['mt-2 text-base', rejected ? 'text-muted' : 'text-text', selected ? '' : 'line-clamp-2'].join(' ')}>{h.critic_reason}</p>
       )}
       {h.lane === 'verified' && selected && (
         <div className="mt-3 border-t border-line pt-3 text-base">

@@ -14,9 +14,9 @@ export function App() {
   const link = ({ isActive }: { isActive: boolean }) =>
     ['px-3 py-1.5 rounded-md', isActive ? 'bg-surface-2 text-text' : 'text-muted hover:text-text'].join(' ')
   return (
-    <div className="min-h-dvh">
+    <div className="h-dvh flex flex-col">
       <nav className="border-b border-line">
-        <div className="mx-auto max-w-7xl px-4 md:px-6 h-16 flex items-center gap-6">
+        <div className="mx-auto w-full max-w-[1760px] px-4 md:px-6 h-16 flex items-center gap-6">
           <NavLink to="/" className="font-bold text-xl tracking-tight">SafeNest</NavLink>
           <div className="flex gap-1 text-base">
             <NavLink to="/" end className={link}>Upload</NavLink>
@@ -26,11 +26,13 @@ export function App() {
           </div>
         </div>
       </nav>
-      <main className="mx-auto max-w-7xl px-4 md:px-6 py-8">
-        <Outlet />
+      <main className="flex-1 min-h-0 overflow-y-auto">
+        <div className="mx-auto w-full max-w-[1760px] px-4 md:px-6 py-6 h-full">
+          <Outlet />
+        </div>
       </main>
-      <footer className="border-t border-line">
-        <div className="mx-auto max-w-7xl px-4 md:px-6 py-3 flex flex-wrap gap-x-6 gap-y-1 text-base text-muted">
+      <footer className="border-t border-line shrink-0">
+        <div className="mx-auto w-full max-w-[1760px] px-4 md:px-6 py-2 flex flex-wrap gap-x-6 gap-y-1 text-base text-muted">
           {health ? (
             <>
               <span>

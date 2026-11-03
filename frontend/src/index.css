@@ -35,3 +35,6 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .settle { animation: none; }
 }
+
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }

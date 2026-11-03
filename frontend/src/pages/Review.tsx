@@ -69,11 +69,11 @@ export function Review() {
   if (!scan) return <p className="text-muted">Loading…</p>
 
   return (
-    <div className="grid gap-6">
+    <div className="grid gap-5 2xl:h-full 2xl:grid-rows-[auto_auto_minmax(0,1fr)]">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl md:text-4xl font-medium leading-tight">{scan.title || 'Checking the walkthrough'}</h1>
-          {done && scan.summary && <p className="mt-2 text-muted max-w-[70ch]">{scan.summary}</p>}
+          {done && scan.summary && <p className="mt-1 text-muted max-w-[90ch] 2xl:line-clamp-1">{scan.summary}</p>}
         </div>
         <div className="flex gap-2">
           {scan.label === 'after' && scan.baseline_scan_id && (
@@ -89,8 +89,8 @@ export function Review() {
       <StageProgress stages={stages} timings={done ? scan.timings_ms : undefined} />
       {error && <p className="text-verified">{error}</p>}
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] items-start">
-        <div className="lg:sticky lg:top-6 grid gap-3">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] items-start 2xl:min-h-0">
+        <div className="lg:sticky lg:top-0 grid gap-3">
           {tracking ? <TrackPlayer scan={scan} hazard={tracking} onClose={() => setTracking(null)} /> : <FrameViewer scan={scan} selected={selected} />}
           {done && (
             <p className="text-base text-muted">
@@ -99,7 +99,9 @@ export function Review() {
             </p>
           )}
         </div>
-        <Lanes hazards={hazards} selectedId={selectedId} onSelect={onSelect} onFixPreview={setPreview} onTrack={onTrack} />
+        <div className="2xl:h-full 2xl:min-h-0 2xl:overflow-y-auto no-scrollbar 2xl:pb-2">
+          <Lanes hazards={hazards} selectedId={selectedId} onSelect={onSelect} onFixPreview={setPreview} onTrack={onTrack} />
+        </div>
       </div>
 
       {preview && <FixPreviewDialog hazard={preview} onClose={() => setPreview(null)} />}
