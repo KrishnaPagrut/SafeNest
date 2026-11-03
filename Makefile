@@ -1,10 +1,13 @@
 .PHONY: dev backend frontend test demo lint
 
+# Override if :8000 is taken, e.g. `make dev PORT=8010`. The Vite proxy reads VITE_API_PORT.
+PORT ?= 8000
+
 backend:
-	cd backend && uv run uvicorn app.main:app --reload --port 8000
+	cd backend && uv run uvicorn app.main:app --reload --port $(PORT)
 
 frontend:
-	cd frontend && npm run dev
+	cd frontend && VITE_API_PORT=$(PORT) npm run dev
 
 dev:
 	$(MAKE) -j2 backend frontend
@@ -16,4 +19,4 @@ lint:
 	cd backend && uv run ruff check . && uv run ruff format --check .
 
 demo:
-	cd backend && SAFENEST_CACHE_ONLY=1 uv run uvicorn app.main:app --port 8000 & cd frontend && npm run dev
+	cd backend && SAFENEST_CACHE_ONLY=1 uv run uvicorn app.main:app --port $(PORT) & cd frontend && VITE_API_PORT=$(PORT) npm run dev
