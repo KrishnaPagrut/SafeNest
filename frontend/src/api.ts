@@ -8,7 +8,12 @@ async function json<T>(input: string, init?: RequestInit): Promise<T> {
 }
 
 export const api = {
-  health: () => json<Health>('/api/health'),
+  // Another app on :8000 would also answer /api/health, so only accept the SafeNest shape.
+  async health(): Promise<Health> {
+    const h = await json<Partial<Health>>('/api/health')
+    if (typeof h.cache_only !== 'boolean' || typeof h.model !== 'string') throw new Error('Not the SafeNest backend')
+    return h as Health
+  },
 
   async listScans(): Promise<ScanSummary[]> {
     let live: ScanSummary[] = []
