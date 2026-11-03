@@ -1,5 +1,5 @@
 import type { Hazard } from '../types'
-import { fmt } from './FrameViewer'
+import { fmt } from './MaskedFrame'
 
 interface Props {
   hazard: Hazard
@@ -24,6 +24,11 @@ export function HazardCard({ hazard: h, selected, onSelect, onFixPreview }: Prop
         rejected ? 'opacity-75' : '',
       ].join(' ')}
     >
+      {rejected && (
+        <div className="mb-2 flex items-center gap-2">
+          <span className="rounded bg-surface-2 border border-line px-2 py-0.5 text-base text-muted">AI claim dropped</span>
+        </div>
+      )}
       <div className="flex items-start justify-between gap-3">
         <div className={['font-medium leading-tight', rejected ? 'line-through decoration-2 text-muted' : ''].join(' ')}>{h.title}</div>
         <span className="shrink-0 text-base text-muted">{fmt(h.evidence[0]?.t_sec ?? h.t_sec)}</span>
@@ -34,6 +39,9 @@ export function HazardCard({ hazard: h, selected, onSelect, onFixPreview }: Prop
         <div className="mt-2 text-base text-muted">
           {h.evidence.length ? `SAM found it at ${fmt(h.evidence[0].t_sec)}. Checking…` : 'Looking for it in the video…'}
         </div>
+      )}
+      {rejected && h.evidence.length === 0 && (
+        <p className="mt-2 text-text">SAM found 0 px for "{h.phrase}"</p>
       )}
       {h.critic_reason && (
         <p className={['mt-2 text-base', rejected ? 'text-muted' : 'text-text'].join(' ')}>{h.critic_reason}</p>

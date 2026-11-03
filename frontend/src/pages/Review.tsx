@@ -26,7 +26,13 @@ export function Review() {
       if (!alive) return
       switch (e.type) {
         case 'stage':
-          setStages((st) => ({ ...st, [e.data.stage]: { status: e.data.status, detail: e.data.detail } }))
+          setStages((st) => {
+            const prev = st[e.data.stage]
+            const now = performance.now()
+            return { ...st, [e.data.stage]: e.data.status === 'start'
+              ? { status: 'start', detail: e.data.detail, startedAt: now }
+              : { status: 'done', detail: e.data.detail, startedAt: prev.startedAt, ms: prev.startedAt != null ? now - prev.startedAt : undefined } }
+          })
           break
         case 'hazard_proposed':
         case 'hazard_grounded':
@@ -38,6 +44,7 @@ export function Review() {
           break
         case 'complete':
           setScan(e.data); setHazards(e.data.hazards)
+          setStages((st) => Object.fromEntries(Object.entries(st).map(([k, v]) => [k, { ...v, status: 'done' }])) as StageState)
           break
         case 'error':
           setError(`${e.data.stage}: ${e.data.message}`)
@@ -76,7 +83,7 @@ export function Review() {
         </div>
       </header>
 
-      {!done && <StageProgress stages={stages} />}
+      <StageProgress stages={stages} timings={done ? scan.timings_ms : undefined} />
       {error && <p className="text-verified">{error}</p>}
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] items-start">

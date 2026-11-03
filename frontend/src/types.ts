@@ -79,4 +79,4 @@ export type ScanEvent =
   | { type: 'complete'; data: Scan }
   | { type: 'error'; data: { message: string; stage: string } }
 
-export interface Health { ok: boolean; cache_only: boolean; model: string; has_key?: boolean }
+export interface Health { ok: boolean; cache_only: boolean; model: string; has_key?: boolean; spent_usd?: number; budget_usd?: number }
