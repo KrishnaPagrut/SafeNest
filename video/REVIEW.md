@@ -4,7 +4,7 @@
 
 **What was measured:** `npx hyperframes check` passes with 0 errors and 0 warnings (lint, runtime, layout, craft, audio). Review sheets (beats, seams, phone) were read. The rendered file's audio is measured with `npx hyperframes audio`, not heard.
 
-**What nobody checked:** the voice is local Kokoro (am_michael); pronunciation of "SAM 3.1" and "Muse" was not listened to. Music is a local MusicGen bed if it finished in time; otherwise the film is voice only and says so in the delivery note.
+**What nobody checked:** the voice is local Kokoro (am_michael); pronunciation of "SAM 3.1" and "Muse" was not listened to. No music: the local MusicGen fallback ran 31 minutes on CPU with the machine out of free memory and was stopped. The film is voice only. To add a bed later: sign in to HeyGen (`heygen auth login --oauth`) for catalog music, or drop any licensed track at `assets/bgm/bed.wav` and run `node build.mjs`, which mixes it at 0.14 under the voice.
 
 **Weakest shot:** the hook and the proof section both come from the built-in sample walkthrough, whose keyframes are drawn placeholders. Re-record `assets/rec/*.mp4` with `pw/record.mjs` once real before/after footage is cached, then `node build.mjs` and re-render; the narration does not claim the footage is real.
 
