@@ -1,0 +1,33 @@
+<template>
+<style>
+@font-face{font-family:"Atkinson Next";font-weight:500;src:url("assets/fonts/atkinson-500.woff2") format("woff2")}
+@font-face{font-family:"Atkinson Next";font-weight:700;src:url("assets/fonts/atkinson-700.woff2") format("woff2")}
+#root{position:absolute;inset:0;background:#1c1a17;overflow:hidden;font-family:"Atkinson Next",sans-serif;color:#f2ece2}
+.punch{position:absolute;inset:0;will-change:transform}
+video{position:absolute;left:0;top:0;width:1920px;height:1080px;object-fit:contain}
+.scrim{position:absolute;inset:0;pointer-events:none}
+.label{position:absolute;font-weight:500;font-size:34px;line-height:1.2;padding:10px 16px;background:#1c1a17;border:2px solid #f2ece2;border-radius:8px;white-space:nowrap}
+.label.accent{border-color:#e5484d}
+.big{position:absolute;left:104px;top:800px;width:700px}
+.big .l1{font-weight:700;font-size:120px;line-height:1;letter-spacing:-0.01em}
+.big .l2{font-weight:500;font-size:34px;line-height:1.25;margin-top:14px;color:#f2ece2}
+.big .bar{height:6px;width:160px;background:#e5484d;margin-top:18px;transform-origin:left center}
+</style>
+<div id="root" data-composition-id="fixed" data-width="1920" data-height="1080">
+<div id="fixed-punch" class="punch"><video id="fixed-v" class="clip" data-start="0" data-duration="8.6" data-media-start="3" src="assets/rec/fixed.mp4" muted playsinline data-track-index="1"></video></div>
+<svg id="fixed-scrim" class="scrim clip" data-start="2.9" data-duration="5.70" data-track-index="2" width="1920" height="1080" viewBox="0 0 1920 1080" data-layout-ignore>
+  <defs><mask id="fixed-m"><rect width="1920" height="1080" fill="#fff"/><rect id="fixed-hole" x="534" y="134" width="852" height="480" rx="8" fill="#000"/></mask></defs>
+  <g id="fixed-sg" opacity="0"><rect width="1920" height="1080" fill="#1c1a17" opacity="0.62" mask="url(#fixed-m)"/>
+  <rect id="fixed-ring" x="534" y="134" width="852" height="480" rx="8" fill="none" stroke="#f2ece2" stroke-width="2"/></g></svg>
+<div id="fixed-label" class="label clip" data-start="3.4" data-duration="4.6" data-track-index="3" style="left:534px;top:690px"><span id="fixed-label-in">Muse Image 1.0 edits the real keyframe</span></div>
+</div>
+<script>
+(() => {
+  const tl = gsap.timeline({ paused: true });
+  tl.fromTo("#fixed-sg",{attr:{opacity:0}},{attr:{opacity:1},duration:0.600,ease:"power2.out"},3);
+  tl.to("#fixed-sg",{attr:{opacity:0},duration:0.400,ease:"power2.out"},8.2);
+  tl.fromTo("#fixed-label-in",{opacity:0,y:10},{opacity:1,y:0,duration:0.400,ease:"power2.out"},3.4);
+  window.__timelines["fixed"] = tl;
+})();
+</script>
+</template>

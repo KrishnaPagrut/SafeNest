@@ -1,0 +1,132 @@
+{
+  "upload": [
+    {
+      "label": "loaded",
+      "t": 2.385
+    },
+    {
+      "label": "click-demo",
+      "t": 2.987
+    },
+    {
+      "label": "review-start",
+      "t": 4.296
+    },
+    {
+      "label": "review-done",
+      "t": 26.312
+    },
+    {
+      "label": "end",
+      "t": 27.815
+    }
+  ],
+  "rejected": [
+    {
+      "label": "ready",
+      "t": 21.922
+    },
+    {
+      "label": "click-rejected",
+      "t": 22.681
+    },
+    {
+      "label": "end",
+      "t": 27.712
+    }
+  ],
+  "track": [
+    {
+      "label": "ready",
+      "t": 21.88
+    },
+    {
+      "label": "click-rug",
+      "t": 22.764
+    },
+    {
+      "label": "click-track",
+      "t": 25.271
+    },
+    {
+      "label": "tracking",
+      "t": 27.693
+    },
+    {
+      "label": "end",
+      "t": 33.695
+    }
+  ],
+  "needs-check": [
+    {
+      "label": "ready",
+      "t": 21.903
+    },
+    {
+      "label": "click-tub",
+      "t": 22.587
+    },
+    {
+      "label": "end",
+      "t": 27.12
+    }
+  ],
+  "fixed": [
+    {
+      "label": "ready",
+      "t": 21.386
+    },
+    {
+      "label": "click-rug",
+      "t": 22.115
+    },
+    {
+      "label": "click-fixed",
+      "t": 23.956
+    },
+    {
+      "label": "preview",
+      "t": 26.37
+    },
+    {
+      "label": "slid",
+      "t": 29.488
+    },
+    {
+      "label": "end",
+      "t": 31.489
+    }
+  ],
+  "compare": [
+    {
+      "label": "loaded",
+      "t": 1.837
+    },
+    {
+      "label": "scrubbed",
+      "t": 4.46
+    },
+    {
+      "label": "click-still",
+      "t": 5.819
+    },
+    {
+      "label": "click-fixed",
+      "t": 9.983
+    },
+    {
+      "label": "end",
+      "t": 12.996
+    }
+  ],
+  "report": [
+    {
+      "label": "loaded",
+      "t": 1.817
+    },
+    {
+      "label": "end",
+      "t": 5.82
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+01|One in four Americans over sixty-five falls every year. Most of those falls happen at home, over things we walk past every day.
+02|SafeNest turns a thirty-second phone walkthrough into a hazard check that has to prove itself on camera.
+03|Upload the walkthrough. Three Meta models take it from there.
+04|First, Muse Spark watches the keyframes and names every possible hazard with a short phrase.
+05|Then SAM 3.1 has to find each phrase in the pixels. No pixels, no hazard.
+06|Watch the cards sort themselves: verified, rejected, or check in person.
+07|Spark thought the handrail was loose. SAM searched the frame and found nothing, so the claim was dropped, right in front of you. One Meta model fact-checks another.
+08|Every hazard we keep has a mask on a real frame, and SAM 3.1 can follow it through the whole walk.
+09|Some hazards are things that are missing, like a grab bar. A camera cannot prove an absence, so those go to a person.
+10|Muse Image shows the same hallway with the fix. It is easier to say yes when you can see it.
+11|Fix things over the weekend and film again. SAM confirms what is really gone and flags what is still there. The risk score drops from fifteen to six.
+12|One page for the family, or for an occupational therapist.
+13|SafeNest. Built with Muse Spark, SAM 3.1, and Muse Image. Build for your world, starting with the people who built yours.

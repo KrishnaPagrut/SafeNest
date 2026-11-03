@@ -1,0 +1,14 @@
+hook 0.00
+reveal 9.60
+upload 16.80
+spark 20.60
+sam 27.30
+sort 34.00
+rejected 39.30
+track 50.20
+needs 58.60
+fixed 66.90
+compare 75.50
+report 87.00
+end 91.60
+total 101.20

@@ -1,0 +1,26 @@
+<template>
+<style>
+@font-face{font-family:"Atkinson Next";font-weight:500;src:url("assets/fonts/atkinson-500.woff2") format("woff2")}
+@font-face{font-family:"Atkinson Next";font-weight:700;src:url("assets/fonts/atkinson-700.woff2") format("woff2")}
+#root{position:absolute;inset:0;background:#1c1a17;overflow:hidden;font-family:"Atkinson Next",sans-serif;color:#f2ece2}
+.punch{position:absolute;inset:0;will-change:transform}
+video{position:absolute;left:0;top:0;width:1920px;height:1080px;object-fit:contain}
+.scrim{position:absolute;inset:0;pointer-events:none}
+.label{position:absolute;font-weight:500;font-size:34px;line-height:1.2;padding:10px 16px;background:#1c1a17;border:2px solid #f2ece2;border-radius:8px;white-space:nowrap}
+.label.accent{border-color:#e5484d}
+.big{position:absolute;left:104px;top:800px;width:700px}
+.big .l1{font-weight:700;font-size:120px;line-height:1;letter-spacing:-0.01em}
+.big .l2{font-weight:500;font-size:34px;line-height:1.25;margin-top:14px;color:#f2ece2}
+.big .bar{height:6px;width:160px;background:#e5484d;margin-top:18px;transform-origin:left center}
+</style>
+<div id="root" data-composition-id="sort" data-width="1920" data-height="1080">
+<div id="sort-punch" class="punch"><video id="sort-v" class="clip" data-start="0" data-duration="5.3" data-media-start="17.2" src="assets/rec/upload.mp4" muted playsinline data-track-index="1"></video></div>
+</div>
+<script>
+(() => {
+  const tl = gsap.timeline({ paused: true });
+  
+  window.__timelines["sort"] = tl;
+})();
+</script>
+</template>
