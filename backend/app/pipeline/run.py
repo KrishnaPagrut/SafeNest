@@ -1,5 +1,6 @@
 """One scan end to end: frames → Spotter → Grounder → Critic, emitting SSE events as it goes."""
 
+import asyncio
 import logging
 import time
 from pathlib import Path
@@ -19,7 +20,7 @@ async def run_scan(scan: dict, video: Path, notes: str = "") -> None:
         await store.emit(
             sid, "stage", {"stage": "frames", "status": "start", "detail": "Extracting keyframes"}
         )
-        fr, duration = frames.extract(video, fdir)
+        fr, duration = await asyncio.to_thread(frames.extract, video, fdir)
         scan["frames"] = [{**f, "url": f"/api/scans/{sid}/frames/{f['frame_idx']}.jpg"} for f in fr]
         scan["duration_sec"] = round(duration, 2)
         timings["frames"] = int((time.monotonic() - t) * 1000)

@@ -13,7 +13,7 @@ from sse_starlette.sse import EventSourceResponse
 from app import config, store
 from app.llm import budget
 from app.pipeline import compare as compare_mod
-from app.pipeline import fix_preview, report
+from app.pipeline import fix_preview, report, tracker
 from app.pipeline.run import run_scan
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
@@ -162,6 +162,19 @@ async def hazard_fix_preview(hazard_id: str, body: FixBody | None = None):
         "after_url": h["fix_preview_url"],
         "instruction": instruction,
     }
+
+
+@app.post("/api/hazards/{hazard_id}/track")
+async def hazard_track(hazard_id: str):
+    found = store.find_hazard(hazard_id)
+    if not found:
+        raise HTTPException(404, "hazard not found")
+    scan, h = found
+    d = store.scan_dir(scan["scan_id"])
+    video = next((d / n for n in ("video.mp4", "video.mov") if (d / n).exists()), None)
+    if video is None:
+        raise HTTPException(404, "video missing")
+    return {"hazard_id": hazard_id, "phrase": h["phrase"], **await tracker.track(h["phrase"], video, d)}
 
 
 @app.post("/api/scans/{after_id}/compare/{before_id}")

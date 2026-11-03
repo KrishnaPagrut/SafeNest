@@ -10,6 +10,7 @@ from app.llm import cache
 SPARK_IN_PER_TOKEN = 1.25 / 1e6
 SPARK_OUT_PER_TOKEN = 4.25 / 1e6
 SAM_PER_IMAGE = 2.50 / 1000
+SAM_PER_VIDEO_FRAME = 0.20 / 1000
 IMAGE_PER_IMAGE = 0.01
 
 _lock = threading.Lock()

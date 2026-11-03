@@ -122,6 +122,42 @@ async def sam_image(phrase: str, jpeg: bytes) -> str:
     return text
 
 
+async def sam_video(phrase: str, mp4: bytes, n_frames: int) -> str:
+    """SAM 3.1 video tracking. Raw special-token text, one line per frame. Billed per frame (50-frame minimum)."""
+    key = cache.make_key("samv", config.SAM_MODEL, phrase, mp4)
+    hit = cache.get(key)
+    if hit is not None:
+        return hit.decode()
+    if config.CACHE_ONLY:
+        raise CacheMiss(f"sam_video:{phrase}")
+    budget.check()
+    parts = []
+    async with client().responses.stream(
+        model=config.SAM_MODEL,
+        input=[
+            {
+                "type": "message",
+                "role": "user",
+                "content": [
+                    {"type": "input_text", "text": phrase},
+                    {
+                        "type": "input_video",
+                        "video_url": "data:video/mp4;base64," + base64.b64encode(mp4).decode(),
+                    },
+                ],
+            }
+        ],
+        metadata={"include_confidence": "true", "mask_encoding": "lossless", "propagation_direction": "both"},
+    ) as stream:
+        async for event in stream:
+            if event.type == "response.output_text.delta":
+                parts.append(event.delta)
+    budget.record("sam_video", max(n_frames, 50) * budget.SAM_PER_VIDEO_FRAME)
+    text = "".join(parts)
+    cache.put(key, text.encode())
+    return text
+
+
 async def image_edit(jpeg: bytes, prompt: str) -> bytes:
     """Muse Image edit of one frame. Returns PNG/WebP bytes."""
     key = cache.make_key("img", config.IMAGE_MODEL, prompt, jpeg)

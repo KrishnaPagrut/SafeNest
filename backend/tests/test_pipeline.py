@@ -147,3 +147,13 @@ def test_multi_component_mask_joins_paths():
     line = f"<0f>0<|box;x1=0;y1=0;x2={w - 1};y2={h - 1};w=320;h=240|><|mask;x=0;y=0;data={h},{w},{_encode_raster(bits, w, h)}|>\n"
     [d] = grounder.parse_sam(line)
     assert d["mask_path"].count("M") == 2
+
+
+def test_parse_video_tracks():
+    from app.pipeline import tracker
+
+    lines = "".join(_sam_line(10 + 5 * f, 20, 60 + 5 * f, 70).replace("<0f>", f"<{f}f>") for f in range(3))
+    tracks = tracker.parse_video(lines)
+    [(_oid, tr)] = tracks.items()
+    assert [d["frame_index"] for d in tr] == [0, 1, 2]
+    assert tr[2]["t_sec"] == 2 / tracker.TRACK_FPS and tr[2]["box"][0] == 20.0

@@ -82,6 +82,15 @@ Body: `{}` (optional `{ "instruction": "replace the rug with non-slip flooring" 
 ```
 Cached; calling again returns the same image unless `instruction` changes.
 
+### `POST /api/hazards/{hazard_id}/track` — SAM 3.1 video tracking of one hazard through the walkthrough
+Slow-ish (one SAM video call, ~300 frames at 10 fps; cached after first call). Overlay on the `<video>`: at time
+`t`, draw the track entry with the largest `t_sec ≤ t`. Box/mask are in the tracking clip's pixels, which equal the
+keyframe size (both are scaled to ≤960 px wide), so reuse `frames[0].w/h` as the coordinate space.
+```json
+200 { "hazard_id": "hz_8f2a_0", "phrase": "throw rug", "fps": 10, "frames": 300,
+      "objects": [ { "object_id": "0", "track": [ { "frame_index": 0, "t_sec": 0.0, "box": [..], "mask_path": "M..Z", "score": 0.91 } ] } ] }
+```
+
 ### `POST /api/scans/{after_id}/compare/{before_id}` — re-film diff → `Comparison` (§3)
 
 ### `GET /api/scans/{scan_id}/report.pdf` — one-page PDF (if a comparison exists for this scan, it is included)

@@ -33,21 +33,24 @@ def parse_sam(text: str) -> list[dict]:
     for oid, b in boxes.items():
         box = [float(b.left), float(b.top), float(b.right), float(b.bottom)]
         m = masks.get(oid)
-        path = None
-        score = b.confidence
-        if m is not None:
-            score = m.confidence if m.confidence is not None else score
-            try:
-                # Public decode_mask_to_svg_path raises on multi-component masks (rug + its fringe); join all contours.
-                svg = "".join(_decode_to_svg_path(decode_mask_to_rle(m.mask)))
-                path = _place_path(svg, m.bounds, m.mask.width, m.mask.height) if svg else None
-            except Exception as e:  # malformed mask → fall back to the box outline
-                log.warning("mask decode failed for %s: %s", oid, e)
-        if path is None:
-            x1, y1, x2, y2 = box
-            path = f"M{x1} {y1}L{x2} {y1}L{x2} {y2}L{x1} {y2}Z"
+        score = (m.confidence if m is not None else None) or b.confidence
+        path = _mask_path(m, box)
         out.append({"box": box, "mask_path": path, "score": score})
     return out
+
+
+def _mask_path(m, box: list[float]) -> str:
+    """Mask record → SVG path in frame px; falls back to the box outline if the mask is missing or malformed."""
+    if m is not None:
+        try:
+            # Public decode_mask_to_svg_path raises on multi-component masks (rug + its fringe); join all contours.
+            svg = "".join(_decode_to_svg_path(decode_mask_to_rle(m.mask)))
+            if svg:
+                return _place_path(svg, m.bounds, m.mask.width, m.mask.height)
+        except Exception as e:
+            log.warning("mask decode failed: %s", e)
+    x1, y1, x2, y2 = box
+    return f"M{x1} {y1}L{x2} {y1}L{x2} {y2}L{x1} {y2}Z"
 
 
 def _place_path(path: str, bounds, mw: int, mh: int) -> str:
