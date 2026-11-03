@@ -1,4 +1,4 @@
-import type { Hazard, Lane } from '../types'
+import type { Frame, Hazard, Lane } from '../types'
 import { HazardCard } from './HazardCard'
 
 interface Props {
@@ -7,6 +7,7 @@ interface Props {
   onSelect: (h: Hazard) => void
   onFixPreview: (h: Hazard) => void
   onTrack: (h: Hazard) => void
+  frames: Frame[]
 }
 
 const LANES: { lane: Lane; title: string; hint: string; color: string }[] = [
@@ -15,7 +16,8 @@ const LANES: { lane: Lane; title: string; hint: string; color: string }[] = [
   { lane: 'needs_check', title: 'Check in person', hint: 'Something missing. A camera cannot prove an absence.', color: 'bg-check' },
 ]
 
-export function Lanes({ hazards, selectedId, onSelect, onFixPreview, onTrack }: Props) {
+export function Lanes({ hazards, selectedId, onSelect, onFixPreview, onTrack, frames }: Props) {
+  const frameFor = (h: Hazard) => frames.find((f) => f.frame_idx === h.frame_idx) ?? null
   const pending = hazards.filter((h) => h.lane === 'pending')
   return (
     <div className="grid gap-4 md:grid-cols-3">
@@ -31,7 +33,7 @@ export function Lanes({ hazards, selectedId, onSelect, onFixPreview, onTrack }: 
             <p className="text-base text-muted mb-3">{hint}</p>
             <div className="flex flex-col gap-2">
               {items.map((h) => (
-                <HazardCard key={h.hazard_id} hazard={h} selected={h.hazard_id === selectedId} onSelect={onSelect} onFixPreview={onFixPreview} onTrack={onTrack} />
+                <HazardCard key={h.hazard_id} hazard={h} selected={h.hazard_id === selectedId} onSelect={onSelect} onFixPreview={onFixPreview} onTrack={onTrack} frame={lane === 'rejected' ? frameFor(h) : null} />
               ))}
               {items.length === 0 && pending.length === 0 && <div className="text-muted text-base py-4">Nothing here.</div>}
             </div>

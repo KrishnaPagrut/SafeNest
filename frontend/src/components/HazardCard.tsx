@@ -1,4 +1,4 @@
-import type { Hazard } from '../types'
+import type { Frame, Hazard } from '../types'
 import { fmt } from './MaskedFrame'
 
 interface Props {
@@ -7,11 +7,12 @@ interface Props {
   onSelect: (h: Hazard) => void
   onFixPreview?: (h: Hazard) => void
   onTrack?: (h: Hazard) => void
+  frame?: Frame | null       // the keyframe SAM searched, shown on rejected cards
 }
 
 const SEVERITY = { 3: 'Fix today', 2: 'Fix this week', 1: 'Worth fixing' } as const
 
-export function HazardCard({ hazard: h, selected, onSelect, onFixPreview, onTrack }: Props) {
+export function HazardCard({ hazard: h, selected, onSelect, onFixPreview, onTrack, frame }: Props) {
   const rejected = h.lane === 'rejected'
   const pending = h.lane === 'pending'
   return (
@@ -42,7 +43,15 @@ export function HazardCard({ hazard: h, selected, onSelect, onFixPreview, onTrac
         </div>
       )}
       {rejected && h.evidence.length === 0 && (
-        <p className="mt-2 text-text">SAM found 0 px for "{h.phrase}"</p>
+        <div className="mt-2">
+          {frame && (
+            <div className="relative rounded overflow-hidden border border-line bg-black aspect-video">
+              <img src={frame.url} alt={`Keyframe at ${frame.t_sec}s, searched for ${h.phrase}`} className="absolute inset-0 w-full h-full object-contain opacity-60" />
+              <span className="absolute left-2 bottom-2 rounded bg-ink/85 border border-line px-2 py-0.5 text-base text-text">"{h.phrase}" · 0 px</span>
+            </div>
+          )}
+          <p className="mt-2 text-text">SAM searched frame {h.frame_idx} and found 0 px for "{h.phrase}"</p>
+        </div>
       )}
       {h.critic_reason && (
         <p className={['mt-2 text-base', rejected ? 'text-muted' : 'text-text', selected ? '' : 'line-clamp-2'].join(' ')}>{h.critic_reason}</p>

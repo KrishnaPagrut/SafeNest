@@ -66,6 +66,7 @@ export function Compare() {
           <p className="mt-2 text-muted max-w-[70ch]">
             {fixed} of {cmp.items.length} hazards are gone. Risk score went from {cmp.score_before} to {cmp.score_after}
             {drop > 0 ? `, down ${drop}%` : ''}.
+            <span className="block text-base mt-1">Risk score adds the severity of every hazard still present: 3 for fix today, 2 for this week, 1 for worth fixing.</span>
           </p>
         </div>
         <div className="flex items-baseline gap-6">

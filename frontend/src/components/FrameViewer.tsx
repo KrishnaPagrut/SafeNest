@@ -55,4 +55,3 @@ export function FrameViewer({ scan, selected }: Props) {
   )
 }
 
-export { fmt }

@@ -100,7 +100,7 @@ export function Review() {
           )}
         </div>
         <div className="2xl:h-full 2xl:min-h-0 2xl:overflow-y-auto no-scrollbar 2xl:pb-2">
-          <Lanes hazards={hazards} selectedId={selectedId} onSelect={onSelect} onFixPreview={setPreview} onTrack={onTrack} />
+          <Lanes hazards={hazards} selectedId={selectedId} onSelect={onSelect} onFixPreview={setPreview} onTrack={onTrack} frames={scan.frames} />
         </div>
       </div>
 
