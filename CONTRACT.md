@@ -8,6 +8,9 @@ needs the change, and tell the other side. Never silently diverge.
 - Coordinates: every box / mask is in **source-frame pixels** of the frame it belongs to (`frame.w × frame.h`).
   Scale to the rendered video size on the client.
 - Times: seconds as float (`t_sec`), from the start of the video.
+- URLs (`Frame.url`, `Scan.video_url`, `fix_preview_url`, …) are root-relative (`/api/...`); use them verbatim.
+- One `Evidence` entry = one SAM instance in one frame. A hazard can have several per frame (two rugs):
+  draw every entry whose `frame_idx` matches the frame on screen.
 - IDs: short strings (`scan_…`, `hz_…`). Treat as opaque.
 
 ---
@@ -100,7 +103,8 @@ interface Evidence {
   frame_idx: number;
   t_sec: number;
   box: [number, number, number, number];   // x1, y1, x2, y2 in frame px
-  mask_path: string;                       // SVG path "M..L..Z" in FRAME px (already offset by box) — use new Path2D(mask_path)
+  mask_path: string;                       // SVG path in FRAME px (already offset by box), may contain several
+                                           // "M..Z" subpaths for one object — use ctx.fill(new Path2D(mask_path), "evenodd")
   score: number | null;                    // SAM confidence if available
 }
 

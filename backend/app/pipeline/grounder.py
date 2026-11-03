@@ -6,7 +6,8 @@ import logging
 import re
 from pathlib import Path
 
-from meta_sam_parser import CompletedOutcome, decode_mask_to_svg_path, image_segmentation_format
+from meta_sam_parser import CompletedOutcome, decode_mask_to_rle, image_segmentation_format
+from meta_sam_parser._mask_conversion import _decode_to_svg_path
 
 from app import config
 from app.llm.client import sam_image
@@ -37,7 +38,9 @@ def parse_sam(text: str) -> list[dict]:
         if m is not None:
             score = m.confidence if m.confidence is not None else score
             try:
-                path = _place_path(decode_mask_to_svg_path(m.mask), m.bounds, m.mask.width, m.mask.height)
+                # Public decode_mask_to_svg_path raises on multi-component masks (rug + its fringe); join all contours.
+                svg = "".join(_decode_to_svg_path(decode_mask_to_rle(m.mask)))
+                path = _place_path(svg, m.bounds, m.mask.width, m.mask.height) if svg else None
             except Exception as e:  # malformed mask → fall back to the box outline
                 log.warning("mask decode failed for %s: %s", oid, e)
         if path is None:

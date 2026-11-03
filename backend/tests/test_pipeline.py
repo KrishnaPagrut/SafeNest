@@ -137,3 +137,13 @@ def test_end_to_end(video, monkeypatch):
     assert "hazard_judged" in ev and "event: complete" in ev
     pdf = c.get(f"/api/scans/{sid}/report.pdf")
     assert pdf.content[:4] == b"%PDF"
+
+
+def test_multi_component_mask_joins_paths():
+    from meta_sam_parser._mask_codec import _encode_raster
+
+    w, h = 30, 10
+    bits = [1 if (2 <= x < 8 or 20 <= x < 27) and 2 <= y < 8 else 0 for y in range(h) for x in range(w)]
+    line = f"<0f>0<|box;x1=0;y1=0;x2={w - 1};y2={h - 1};w=320;h=240|><|mask;x=0;y=0;data={h},{w},{_encode_raster(bits, w, h)}|>\n"
+    [d] = grounder.parse_sam(line)
+    assert d["mask_path"].count("M") == 2
