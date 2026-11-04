@@ -2,131 +2,131 @@
   "upload": [
     {
       "label": "loaded",
-      "t": 2.385
+      "t": 2.389
     },
     {
       "label": "click-demo",
-      "t": 2.987
+      "t": 3.16
     },
     {
       "label": "review-start",
-      "t": 4.296
+      "t": 4.619
     },
     {
       "label": "review-done",
-      "t": 26.312
+      "t": 26.63
     },
     {
       "label": "end",
-      "t": 27.815
+      "t": 28.135
     }
   ],
   "rejected": [
     {
       "label": "ready",
-      "t": 21.922
+      "t": 21.51
     },
     {
       "label": "click-rejected",
-      "t": 22.681
+      "t": 22.465
     },
     {
       "label": "end",
-      "t": 27.712
+      "t": 27.493
     }
   ],
   "track": [
     {
       "label": "ready",
-      "t": 21.88
+      "t": 21.798
     },
     {
       "label": "click-rug",
-      "t": 22.764
+      "t": 22.537
     },
     {
       "label": "click-track",
-      "t": 25.271
+      "t": 25.248
     },
     {
       "label": "tracking",
-      "t": 27.693
+      "t": 27.669
     },
     {
       "label": "end",
-      "t": 33.695
+      "t": 33.671
     }
   ],
   "needs-check": [
     {
       "label": "ready",
-      "t": 21.903
+      "t": 21.881
     },
     {
       "label": "click-tub",
-      "t": 22.587
+      "t": 22.867
     },
     {
       "label": "end",
-      "t": 27.12
+      "t": 27.393
     }
   ],
   "fixed": [
     {
       "label": "ready",
-      "t": 21.386
+      "t": 21.352
     },
     {
       "label": "click-rug",
-      "t": 22.115
+      "t": 22.296
     },
     {
       "label": "click-fixed",
-      "t": 23.956
+      "t": 24.453
     },
     {
       "label": "preview",
-      "t": 26.37
+      "t": 26.874
     },
     {
       "label": "slid",
-      "t": 29.488
+      "t": 33.316
     },
     {
       "label": "end",
-      "t": 31.489
+      "t": 35.32
     }
   ],
   "compare": [
     {
       "label": "loaded",
-      "t": 1.837
+      "t": 2.062
     },
     {
       "label": "scrubbed",
-      "t": 4.46
+      "t": 4.691
     },
     {
       "label": "click-still",
-      "t": 5.819
+      "t": 6.094
     },
     {
       "label": "click-fixed",
-      "t": 9.983
+      "t": 10.211
     },
     {
       "label": "end",
-      "t": 12.996
+      "t": 13.23
     }
   ],
   "report": [
     {
       "label": "loaded",
-      "t": 1.817
+      "t": 1.999
     },
     {
       "label": "end",
-      "t": 5.82
+      "t": 6.002
     }
   ]
 }
