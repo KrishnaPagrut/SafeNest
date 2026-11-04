@@ -15,3 +15,7 @@ video/renders/
 video/.hyperframes/
 video/assets/bgm/*.log
 video/BEATS.txt
+
+# Home walkthrough footage stays local (the repo is public)
+demo/*.mp4
+demo/*.mov
