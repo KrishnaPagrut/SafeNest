@@ -1,7 +1,13 @@
 // Mirrors CONTRACT.md §3. Keep in sync; change in the same PR as the backend.
 export type Lane = 'pending' | 'verified' | 'rejected' | 'needs_check'
 
-export interface Frame { frame_idx: number; t_sec: number; w: number; h: number; url: string }
+export interface Frame {
+  frame_idx: number
+  t_sec: number
+  w: number
+  h: number
+  url: string
+}
 
 export interface Evidence {
   frame_idx: number
@@ -67,10 +73,27 @@ export interface Comparison {
   score_after: number
 }
 
-export interface FixPreview { hazard_id: string; before_url: string; after_url: string; instruction: string }
+export interface FixPreview {
+  hazard_id: string
+  before_url: string
+  after_url: string
+  instruction: string
+}
 
-export interface TrackEntry { frame_index: number; t_sec: number; box: [number, number, number, number]; mask_path: string; score: number | null }
-export interface Track { hazard_id: string; phrase: string; fps: number; frames: number; objects: { object_id: string; track: TrackEntry[] }[] }
+export interface TrackEntry {
+  frame_index: number
+  t_sec: number
+  box: [number, number, number, number]
+  mask_path: string
+  score: number | null
+}
+export interface Track {
+  hazard_id: string
+  phrase: string
+  fps: number
+  frames: number
+  objects: { object_id: string; track: TrackEntry[] }[]
+}
 
 export type Stage = 'frames' | 'spotter' | 'grounder' | 'critic'
 
@@ -82,4 +105,11 @@ export type ScanEvent =
   | { type: 'complete'; data: Scan }
   | { type: 'error'; data: { message: string; stage: string } }
 
-export interface Health { ok: boolean; cache_only: boolean; model: string; has_key?: boolean; spent_usd?: number; budget_usd?: number }
+export interface Health {
+  ok: boolean
+  cache_only: boolean
+  model: string
+  has_key?: boolean
+  spent_usd?: number
+  budget_usd?: number
+}

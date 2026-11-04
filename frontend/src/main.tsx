@@ -10,7 +10,8 @@ import { Upload } from './pages/Upload'
 
 const router = createBrowserRouter([
   {
-    path: '/', element: <App />,
+    path: '/',
+    element: <App />,
     children: [
       { index: true, element: <Upload /> },
       { path: 'review/:scanId', element: <Review /> },

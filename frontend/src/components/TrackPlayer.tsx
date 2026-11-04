@@ -3,13 +3,19 @@ import { api } from '../api'
 import type { Hazard, Scan, Track, TrackEntry } from '../types'
 import { drawMasks, fmt, nearestFrame } from './MaskedFrame'
 
-interface Props { scan: Scan; hazard: Hazard; onClose: () => void }
+interface Props {
+  scan: Scan
+  hazard: Hazard
+  onClose: () => void
+}
 
 function entriesAt(track: Track, t: number): TrackEntry[] {
   const out: TrackEntry[] = []
   for (const o of track.objects) {
     let best: TrackEntry | null = null
-    for (const e of o.track) { if (e.t_sec <= t && (!best || e.t_sec > best.t_sec)) best = e }
+    for (const e of o.track) {
+      if (e.t_sec <= t && (!best || e.t_sec > best.t_sec)) best = e
+    }
     if (best) out.push(best)
   }
   return out
@@ -25,13 +31,22 @@ export function TrackPlayer({ scan, hazard, onClose }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const [size, setSize] = useState({ w: 0, h: 0 })
-  const fw = scan.frames[0]?.w ?? 1280, fh = scan.frames[0]?.h ?? 720
+  const fw = scan.frames[0]?.w ?? 1280,
+    fh = scan.frames[0]?.h ?? 720
   const hasVideo = !!scan.video_url
 
   useEffect(() => {
     let alive = true
-    api.track(hazard.hazard_id).then((tr) => alive && setTrack(tr)).catch((e) => { console.error(e); if (alive) setError('failed') })
-    return () => { alive = false }
+    api
+      .track(hazard.hazard_id)
+      .then((tr) => alive && setTrack(tr))
+      .catch((e) => {
+        console.error(e)
+        if (alive) setError('failed')
+      })
+    return () => {
+      alive = false
+    }
   }, [hazard.hazard_id])
 
   useEffect(() => {
@@ -52,15 +67,22 @@ export function TrackPlayer({ scan, hazard, onClose }: Props) {
       v.currentTime = Math.max(0, start - 0.5)
       v.play().catch(() => {})
       let raf = 0
-      const loop = () => { setT(v.currentTime); raf = requestAnimationFrame(loop) }
+      const loop = () => {
+        setT(v.currentTime)
+        raf = requestAnimationFrame(loop)
+      }
       raf = requestAnimationFrame(loop)
       return () => cancelAnimationFrame(raf)
     }
     const all = track.objects.flatMap((o) => o.track).map((e) => e.t_sec)
-    const t0 = Math.min(...all), t1 = Math.max(...all)
+    const t0 = Math.min(...all),
+      t1 = Math.max(...all)
     let cur = t0
     setT(cur)
-    const id = window.setInterval(() => { cur = cur + 1 / track.fps > t1 ? t0 : cur + 1 / track.fps; setT(cur) }, 1000 / track.fps)
+    const id = window.setInterval(() => {
+      cur = cur + 1 / track.fps > t1 ? t0 : cur + 1 / track.fps
+      setT(cur)
+    }, 1000 / track.fps)
     return () => window.clearInterval(id)
   }, [track, hasVideo])
 
@@ -68,7 +90,8 @@ export function TrackPlayer({ scan, hazard, onClose }: Props) {
     const c = canvasRef.current
     if (!c) return
     const dpr = window.devicePixelRatio || 1
-    c.width = size.w * dpr; c.height = size.h * dpr
+    c.width = size.w * dpr
+    c.height = size.h * dpr
     const ctx = c.getContext('2d')!
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     ctx.clearRect(0, 0, size.w, size.h)
@@ -84,21 +107,39 @@ export function TrackPlayer({ scan, hazard, onClose }: Props) {
     <div className="media">
       <div ref={boxRef} className="relative aspect-video">
         {hasVideo ? (
-          <video ref={videoRef} src={scan.video_url} controls muted className="absolute inset-0 w-full h-full object-contain" />
+          <video
+            ref={videoRef}
+            src={scan.video_url}
+            controls
+            muted
+            className="absolute inset-0 h-full w-full object-contain"
+          />
         ) : frame ? (
-          <img src={frame.url} alt="" className="absolute inset-0 w-full h-full object-contain" />
+          <img src={frame.url} alt="" className="absolute inset-0 h-full w-full object-contain" />
         ) : null}
-        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
+        <canvas ref={canvasRef} className="pointer-events-none absolute inset-0 h-full w-full" />
         {!track && !error && (
-          <div className="absolute inset-0 grid place-items-center bg-black/60 text-white">SAM 3.1 is tracking "{hazard.phrase}" through the video…</div>
+          <div className="absolute inset-0 grid place-items-center bg-black/60 text-white">
+            SAM 3.1 is tracking "{hazard.phrase}" through the video…
+          </div>
         )}
-        {error && <div className="absolute inset-0 grid place-items-center bg-black/60 text-[#ff8a85] px-6 text-center">Tracking isn't available for this hazard right now.</div>}
+        {error && (
+          <div className="absolute inset-0 grid place-items-center bg-black/60 px-6 text-center text-[#ff8a85]">
+            Tracking isn't available for this hazard right now.
+          </div>
+        )}
       </div>
-      <div className="flex items-baseline justify-between gap-3 px-4 py-2.5 text-white/60 text-sm bg-[#1a1713]">
-        <span className="text-white font-medium">SAM 3.1 following "{hazard.phrase}"</span>
+      <div className="flex items-baseline justify-between gap-3 bg-[#1a1713] px-4 py-2.5 text-sm text-white/60">
+        <span className="font-medium text-white">SAM 3.1 following "{hazard.phrase}"</span>
         <span className="flex items-baseline gap-3">
-          <span className="tabular-nums">{fmt(t)}{score != null ? ` · ${Math.round(score * 100)}%` : ''}{live.length === 0 && track ? ' · out of view' : ''}</span>
-          <button type="button" onClick={onClose} className="underline underline-offset-4 hover:text-white">Back to frame</button>
+          <span className="tabular-nums">
+            {fmt(t)}
+            {score != null ? ` · ${Math.round(score * 100)}%` : ''}
+            {live.length === 0 && track ? ' · out of view' : ''}
+          </span>
+          <button type="button" onClick={onClose} className="underline underline-offset-4 hover:text-white">
+            Back to frame
+          </button>
         </span>
       </div>
     </div>

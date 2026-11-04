@@ -6,20 +6,39 @@ type Drawable = Pick<Evidence, 'box' | 'mask_path'>
 export type MaskTone = Lane | 'still' | 'none'
 
 const FILL: Record<MaskTone, string> = {
-  verified: 'rgba(229, 72, 77, 0.42)', needs_check: 'rgba(143, 176, 207, 0.30)',
-  pending: 'rgba(242, 236, 226, 0.22)', rejected: 'rgba(167, 157, 142, 0.18)', still: 'rgba(224, 163, 59, 0.40)', none: 'transparent',
+  verified: 'rgba(229, 72, 77, 0.42)',
+  needs_check: 'rgba(143, 176, 207, 0.30)',
+  pending: 'rgba(242, 236, 226, 0.22)',
+  rejected: 'rgba(167, 157, 142, 0.18)',
+  still: 'rgba(224, 163, 59, 0.40)',
+  none: 'transparent',
 }
 const STROKE: Record<MaskTone, string> = {
-  verified: '#e5484d', needs_check: '#8fb0cf', pending: '#f2ece2', rejected: '#a79d8e', still: '#e0a33b', none: 'transparent',
+  verified: '#e5484d',
+  needs_check: '#8fb0cf',
+  pending: '#f2ece2',
+  rejected: '#a79d8e',
+  still: '#e0a33b',
+  none: 'transparent',
 }
 
 // Draws masks given in frame pixels (fw × fh) onto a canvas of CSS size (w × h), letterboxed like object-contain.
-export function drawMasks(ctx: CanvasRenderingContext2D, items: Drawable[], tone: MaskTone, fw: number, fh: number, w: number, h: number) {
+export function drawMasks(
+  ctx: CanvasRenderingContext2D,
+  items: Drawable[],
+  tone: MaskTone,
+  fw: number,
+  fh: number,
+  w: number,
+  h: number,
+) {
   if (items.length === 0 || tone === 'none') return
   const s = Math.min(w / fw, h / fh)
-  const ox = (w - fw * s) / 2, oy = (h - fh * s) / 2
+  const ox = (w - fw * s) / 2,
+    oy = (h - fh * s) / 2
   ctx.save()
-  ctx.translate(ox, oy); ctx.scale(s, s)
+  ctx.translate(ox, oy)
+  ctx.scale(s, s)
   for (const ev of items) {
     const path = new Path2D(ev.mask_path)
     ctx.fillStyle = FILL[tone]
@@ -38,9 +57,9 @@ export function drawMasks(ctx: CanvasRenderingContext2D, items: Drawable[], tone
 
 interface Props {
   frame: Frame | null
-  evidence: Evidence[]        // only entries for this frame; every one is drawn
+  evidence: Evidence[] // only entries for this frame; every one is drawn
   tone?: MaskTone
-  stamp?: string              // short text stamped over the frame, e.g. "SAM: 0 px"
+  stamp?: string // short text stamped over the frame, e.g. "SAM: 0 px"
   caption?: ReactNode
   className?: string
 }
@@ -64,7 +83,8 @@ export function MaskedFrame({ frame, evidence, tone = 'verified', stamp, caption
     const c = canvasRef.current
     if (!c) return
     const dpr = window.devicePixelRatio || 1
-    c.width = size.w * dpr; c.height = size.h * dpr
+    c.width = size.w * dpr
+    c.height = size.h * dpr
     const ctx = c.getContext('2d')!
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     ctx.clearRect(0, 0, size.w, size.h)
@@ -76,24 +96,29 @@ export function MaskedFrame({ frame, evidence, tone = 'verified', stamp, caption
     <div className={`media ${className}`}>
       <div ref={boxRef} className="relative aspect-video">
         {frame ? (
-          <img src={frame.url} alt={`Keyframe at ${frame.t_sec}s`} className="absolute inset-0 w-full h-full object-contain" />
+          <img
+            src={frame.url}
+            alt={`Keyframe at ${frame.t_sec}s`}
+            className="absolute inset-0 h-full w-full object-contain"
+          />
         ) : (
           <div className="absolute inset-0 grid place-items-center text-white/50">No frame yet</div>
         )}
-        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
-        {stamp && (
-          <span className="absolute left-3 bottom-3 media-tag font-mono ring-1 ring-white/15">{stamp}</span>
-        )}
+        <canvas ref={canvasRef} className="pointer-events-none absolute inset-0 h-full w-full" />
+        {stamp && <span className="media-tag absolute bottom-3 left-3 font-mono ring-1 ring-white/15">{stamp}</span>}
       </div>
       {caption !== undefined && (
-        <div className="flex items-baseline justify-between gap-3 px-4 py-2.5 text-white/60 text-sm bg-[#1a1713] [&_.text-text]:text-white [&_.text-text]:font-medium">{caption}</div>
+        <div className="flex items-baseline justify-between gap-3 bg-[#1a1713] px-4 py-2.5 text-sm text-white/60 [&_.text-text]:font-medium [&_.text-text]:text-white">
+          {caption}
+        </div>
       )}
     </div>
   )
 }
 
 export function fmt(t: number) {
-  const m = Math.floor(t / 60), s = Math.floor(t % 60)
+  const m = Math.floor(t / 60),
+    s = Math.floor(t % 60)
   return `${m}:${s.toString().padStart(2, '0')}`
 }
 

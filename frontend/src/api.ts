@@ -17,7 +17,11 @@ export const api = {
 
   async listScans(): Promise<ScanSummary[]> {
     let live: ScanSummary[] = []
-    try { live = await json<ScanSummary[]>('/api/scans') } catch { /* backend offline */ }
+    try {
+      live = await json<ScanSummary[]>('/api/scans')
+    } catch {
+      /* backend offline */
+    }
     return [...live, ...mock.list()]
   },
 
@@ -39,7 +43,14 @@ export const api = {
   events(id: string, onEvent: (e: ScanEvent) => void, onError?: (err: Error) => void): () => void {
     if (mock.has(id)) return mock.events(id, onEvent)
     const es = new EventSource(`/api/scans/${id}/events`)
-    const types: ScanEvent['type'][] = ['stage', 'hazard_proposed', 'hazard_grounded', 'hazard_judged', 'complete', 'error']
+    const types: ScanEvent['type'][] = [
+      'stage',
+      'hazard_proposed',
+      'hazard_grounded',
+      'hazard_judged',
+      'complete',
+      'error',
+    ]
     for (const type of types) {
       es.addEventListener(type, (ev) => {
         const data = JSON.parse((ev as MessageEvent).data)
@@ -47,14 +58,18 @@ export const api = {
         if (type === 'complete') es.close()
       })
     }
-    es.onerror = () => { onError?.(new Error('Lost connection to the scan stream')); es.close() }
+    es.onerror = () => {
+      onError?.(new Error('Lost connection to the scan stream'))
+      es.close()
+    }
     return () => es.close()
   },
 
   async fixPreview(hazardId: string, instruction?: string): Promise<FixPreview> {
     if (hazardId.startsWith('hz_m') || hazardId.startsWith('hz_a')) return mock.fixPreview(hazardId)
     return json<FixPreview>(`/api/hazards/${hazardId}/fix_preview`, {
-      method: 'POST', headers: { 'content-type': 'application/json' },
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
       body: JSON.stringify(instruction ? { instruction } : {}),
     })
   },
