@@ -60,6 +60,9 @@ cd frontend && npm install && npm run dev     # http://localhost:5173
 - `CONTRACT.md`: API and data contract between backend and frontend.
 - `backend/app/pipeline/`: one module per stage (frames, spotter, grounder, critic, tracker, compare, fix_preview, report).
 - `backend/app/llm/`: Meta Model API adapter, content-hash cache, spend cap, prompts.
+- `frontend/`: React + Vite app (Upload, Review, Compare, Report).
+- `video/`: the demo film (HyperFrames project; `video/tools/record.mjs` re-records the app screens).
+- `demo/`: where the walkthrough videos go, with filming notes.
 - `notes/`: status, journal, handoff, Meta API notes.
 
 SafeNest is a checklist aid based on the CDC STEADI home-safety checklist. It is not a medical assessment.
