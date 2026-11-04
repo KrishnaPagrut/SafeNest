@@ -7,6 +7,15 @@ shows the family what the fixed room looks like, and confirms the fixes when you
 
 Built for the Meta Global AI Developer Hackathon (Indie track, "Build for Your World").
 
+## Status (submission, 4 Nov 2026)
+
+The full pipeline is implemented against the Meta Model API docs and tested end to end offline, with real ffmpeg and
+real HTTP/SSE and the model calls stubbed. **We did not get a working Model API key before the deadline**: the
+console requires a payment method on file even to spend hackathon credits. So nothing in this repo or the demo video
+shows live model output. The app and the film use the **built-in sample walkthrough** ("Try the sample walkthrough" on
+the Upload page), and the film's end card says so. With a key in `.env`, the same code runs live, and
+`backend/scripts/smoke.py` checks Spark, SAM 3.1 and Muse Image first.
+
 ## Why
 
 - More than 1 in 4 Americans aged 65+ falls each year (CDC, 14M+ people). Falls are the leading cause of
@@ -54,8 +63,8 @@ cd frontend && npm install && npm run dev     # http://localhost:5173
 
 - `make check` runs what CI runs: ruff, pytest, oxlint, Prettier and the frontend build. `make fmt` formats both sides.
 - `make test` runs the offline end-to-end test (real ffmpeg + API, model calls stubbed).
-- `make demo` replays the recorded demo from the response cache with zero network
-  (`SAFENEST_CACHE_ONLY=1`).
+- `make demo` serves only from the response cache with zero network (`SAFENEST_CACHE_ONLY=1`). The cache fills
+  on the first live run, so without a key, use the sample walkthrough.
 - **Cost safety:** every live call is priced and recorded. `SAFENEST_BUDGET_USD` (default $25) is a hard cap;
   past it the app serves only the cache. `/api/health` shows the running spend.
 
