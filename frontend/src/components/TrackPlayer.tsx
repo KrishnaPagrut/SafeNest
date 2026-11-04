@@ -30,7 +30,7 @@ export function TrackPlayer({ scan, hazard, onClose }: Props) {
 
   useEffect(() => {
     let alive = true
-    api.track(hazard.hazard_id).then((tr) => alive && setTrack(tr)).catch((e) => alive && setError(String(e.message ?? e)))
+    api.track(hazard.hazard_id).then((tr) => alive && setTrack(tr)).catch((e) => { console.error(e); if (alive) setError('failed') })
     return () => { alive = false }
   }, [hazard.hazard_id])
 
@@ -92,7 +92,7 @@ export function TrackPlayer({ scan, hazard, onClose }: Props) {
         {!track && !error && (
           <div className="absolute inset-0 grid place-items-center bg-black/60 text-white">SAM 3.1 is tracking "{hazard.phrase}" through the video…</div>
         )}
-        {error && <div className="absolute inset-0 grid place-items-center bg-black/60 text-[#ff8a85] px-6 text-center">Tracking failed. {error}</div>}
+        {error && <div className="absolute inset-0 grid place-items-center bg-black/60 text-[#ff8a85] px-6 text-center">Tracking isn't available for this hazard right now.</div>}
       </div>
       <div className="flex items-baseline justify-between gap-3 px-4 py-2.5 text-white/60 text-sm bg-[#1a1713]">
         <span className="text-white font-medium">SAM 3.1 following "{hazard.phrase}"</span>

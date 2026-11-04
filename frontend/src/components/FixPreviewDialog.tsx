@@ -9,7 +9,7 @@ export function FixPreviewDialog({ hazard, onClose }: { hazard: Hazard; onClose:
 
   useEffect(() => {
     let alive = true
-    api.fixPreview(hazard.hazard_id).then((p) => alive && setPreview(p)).catch((e) => alive && setError(String(e.message ?? e)))
+    api.fixPreview(hazard.hazard_id).then((p) => alive && setPreview(p)).catch((e) => { console.error(e); if (alive) setError('failed') })
     return () => { alive = false }
   }, [hazard.hazard_id])
 
@@ -30,7 +30,7 @@ export function FixPreviewDialog({ hazard, onClose }: { hazard: Hazard; onClose:
           </div>
           <button type="button" onClick={onClose} className="btn-ghost px-3.5 py-1.5 text-sm">Close</button>
         </div>
-        {error && <p className="text-verified">Could not make the preview. {error}</p>}
+        {error && <p className="rounded-lg bg-verified-soft px-4 py-3 text-verified">The fix preview isn't available right now. Please try again.</p>}
         {!preview && !error && (
           <div className="aspect-video rounded-xl bg-surface-2 grid place-items-center text-muted relative overflow-hidden">
             <span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-brand-2 pulse-dot" />Muse Image is drawing the fixed room…</span>

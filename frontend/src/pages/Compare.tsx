@@ -27,7 +27,7 @@ export function Compare() {
         const first = c.items.findIndex((i) => i.status !== 'new')
         if (first !== -1) pick(first, c, b, a)
       })
-      .catch((e) => setError(e.message))
+      .catch((e) => { console.error(e); setError('failed') })
   }, [afterId, beforeId])
 
   function pick(i: number, c = cmp, b = before, a = after) {
@@ -52,7 +52,7 @@ export function Compare() {
     }
   }, [sel, cmp, before, after, t])
 
-  if (error) return <p className="rounded-lg bg-verified-soft px-4 py-3 text-verified">Couldn't compare these walkthroughs. {error}</p>
+  if (error) return <p className="rounded-lg bg-verified-soft px-4 py-3 text-verified">We couldn't compare these two walkthroughs.</p>
   if (!cmp || !before || !after) return <p className="text-muted">Comparing…</p>
 
   const fixed = cmp.items.filter((i) => i.status === 'fixed').length

@@ -24,7 +24,7 @@ export function Review() {
   useEffect(() => {
     setHazards([]); setStages(emptyStages()); setSelectedId(null); setError(null); setTracking(null)
     let alive = true
-    api.getScan(scanId).then((s) => alive && setScan({ ...s, hazards: [] })).catch((e) => alive && setError(e.message))
+    api.getScan(scanId).then((s) => alive && setScan({ ...s, hazards: [] })).catch((e) => { console.error(e); if (alive) setError('load') })
     const stop = api.events(scanId, (e) => {
       if (!alive) return
       switch (e.type) {
@@ -50,10 +50,10 @@ export function Review() {
           setStages((st) => Object.fromEntries(Object.entries(st).map(([k, v]) => [k, { ...v, status: 'done' }])) as StageState)
           break
         case 'error':
-          setError(`${e.data.stage}: ${e.data.message}`)
+          console.error(e.data); setError('stage')
           break
       }
-    }, (err) => setError(err.message))
+    }, (err) => { console.error(err); setError('stream') })
     return () => { alive = false; stop() }
   }, [scanId, replay])
 
@@ -67,7 +67,7 @@ export function Review() {
     rejected: hazards.filter((h) => h.lane === 'rejected').length,
   }
 
-  if (error && !scan) return <p className="rounded-lg bg-verified-soft px-4 py-3 text-verified">Couldn't load this walkthrough. {error}</p>
+  if (error && !scan) return <p className="rounded-lg bg-verified-soft px-4 py-3 text-verified">We couldn't find this walkthrough. <Link to="/" className="underline">Start a new one</Link>.</p>
   if (!scan) return <p className="text-muted">Loading…</p>
 
   return (
@@ -90,7 +90,7 @@ export function Review() {
       </header>
 
       <StageProgress stages={stages} timings={done ? scan.timings_ms : undefined} />
-      {error && <p className="rounded-lg bg-verified-soft px-4 py-2 text-verified">{error}</p>}
+      {error && <p className="rounded-lg bg-verified-soft px-4 py-2 text-verified">Part of this check didn't finish. The results below may be incomplete.</p>}
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] items-start 2xl:min-h-0">
         <div className="lg:sticky lg:top-0 grid gap-3">

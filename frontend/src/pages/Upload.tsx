@@ -22,13 +22,11 @@ export function Upload() {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [scans, setScans] = useState<ScanSummary[]>([])
-  const [online, setOnline] = useState<boolean | null>(null)
   const [drag, setDrag] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     api.listScans().then(setScans)
-    api.health().then((h) => setOnline(h.ok)).catch(() => setOnline(false))
   }, [])
 
   const befores = scans.filter((s) => s.label === 'before' && !s.scan_id.startsWith('mock_'))
@@ -43,8 +41,8 @@ export function Upload() {
     try {
       const r = await api.upload(file, label, label === 'after' ? baseline || undefined : undefined, notes || undefined)
       nav(`/review/${r.scan_id}`)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err))
+    } catch {
+      setError("We couldn't upload that video. Please try again in a moment.")
       setBusy(false)
     }
   }
@@ -86,7 +84,7 @@ export function Upload() {
                 <span className="text-muted text-sm">~20 s</span>
               </span>
               <span className="block mt-0.5 text-muted text-base">
-                {demo ? `Replays "${demo.title}" from cache, exactly as it ran.` : 'Watch eight claims get sorted into verified, rejected and check-in-person.'}
+                {demo ? `See exactly how "${demo.title}" was checked.` : 'Watch eight claims get sorted into verified, rejected and check-in-person.'}
               </span>
             </span>
             <Icon name="arrow" className="ml-auto h-5 w-5 text-muted transition-transform group-hover:translate-x-1" />
@@ -157,9 +155,6 @@ export function Upload() {
           </label>
 
           {error && <p className="rounded-lg bg-verified-soft px-3 py-2 text-base text-verified">{error}</p>}
-          {online === false && (
-            <p className="rounded-lg bg-amber-soft px-3 py-2 text-sm text-[#7a500b]">The backend isn't running, so uploads won't work yet. The sample walkthrough still does.</p>
-          )}
 
           <button type="submit" disabled={busy || !file} className="btn-primary w-full py-3 text-lg">
             {busy ? 'Uploading…' : <>Check this walkthrough <Icon name="arrow" className="h-5 w-5" /></>}

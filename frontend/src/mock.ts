@@ -75,7 +75,6 @@ function frameSvg(i: number, present: Prop[] = ALL_PROPS): string {
     parts.push(`<rect x='860' y='330' width='14' height='70' rx='6' fill='#a7b1ae'/>`)
   }
   if (i >= 16 && i <= 19 && has('dark')) parts.push(`<rect width='${W}' height='${H}' fill='#0b0906' opacity='.78'/>`)
-  parts.push(`<text x='24' y='${H - 24}' font-family='ui-monospace,monospace' font-size='22' fill='#ffffff' opacity='.55'>sample keyframe ${i} · ${i}s</text>`)
 
   const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${W}' height='${H}' viewBox='0 0 ${W} ${H}'>${parts.join('')}</svg>`
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`
