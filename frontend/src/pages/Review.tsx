@@ -5,6 +5,7 @@ import { FixPreviewDialog } from '../components/FixPreviewDialog'
 import { FrameViewer } from '../components/FrameViewer'
 import { Lanes } from '../components/Lanes'
 import { TrackPlayer } from '../components/TrackPlayer'
+import { Icon } from '../components/ui'
 import { emptyStages, StageProgress, type StageState } from '../components/StageProgress'
 import type { Hazard, Scan } from '../types'
 
@@ -63,40 +64,43 @@ export function Review() {
   const counts = {
     verified: hazards.filter((h) => h.lane === 'verified').length,
     needs_check: hazards.filter((h) => h.lane === 'needs_check').length,
+    rejected: hazards.filter((h) => h.lane === 'rejected').length,
   }
 
-  if (error && !scan) return <p className="text-verified">Could not load this walkthrough. {error}</p>
+  if (error && !scan) return <p className="rounded-lg bg-verified-soft px-4 py-3 text-verified">Couldn't load this walkthrough. {error}</p>
   if (!scan) return <p className="text-muted">Loading…</p>
 
   return (
     <div className="grid gap-5 2xl:h-full 2xl:grid-rows-[auto_auto_minmax(0,1fr)]">
       <header className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-3xl md:text-4xl font-medium leading-tight">{scan.title || 'Checking the walkthrough'}</h1>
-          {done && scan.summary && <p className="mt-1 text-muted max-w-[90ch] 2xl:line-clamp-1">{scan.summary}</p>}
+        <div className="min-w-0">
+          <span className="eyebrow">{scan.label === 'after' ? 'After walkthrough' : 'Walkthrough review'}{scan.scan_id.startsWith('mock_') ? ' · sample' : ''}</span>
+          <h1 className="mt-1 text-3xl md:text-[2.6rem] font-medium leading-tight">{scan.title || 'Checking the walkthrough'}</h1>
+          {done && scan.summary && <p className="mt-1.5 text-muted max-w-[90ch] 2xl:line-clamp-1">{scan.summary}</p>}
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {scan.label === 'after' && scan.baseline_scan_id && (
-            <Link to={`/compare/${scan.scan_id}/${scan.baseline_scan_id}`} className="rounded-md bg-text text-ink px-4 py-2 font-medium">See what changed</Link>
+            <Link to={`/compare/${scan.scan_id}/${scan.baseline_scan_id}`} className="btn-primary">See what changed <Icon name="arrow" className="h-4 w-4" /></Link>
           )}
-          {done && <Link to={`/report/${scan.scan_id}`} className="rounded-md border border-line px-4 py-2 hover:bg-surface-2">Report</Link>}
+          {done && <Link to={`/report/${scan.scan_id}`} className={scan.label === 'after' ? 'btn-ghost' : 'btn-primary'}><Icon name="doc" className="h-4 w-4" /> Family report</Link>}
           {done && scan.scan_id.startsWith('mock_') && (
-            <button type="button" onClick={() => setReplay((n) => n + 1)} className="rounded-md border border-line px-4 py-2 hover:bg-surface-2">Replay</button>
+            <button type="button" onClick={() => setReplay((n) => n + 1)} className="btn-ghost"><Icon name="replay" className="h-4 w-4" /> Replay</button>
           )}
         </div>
       </header>
 
       <StageProgress stages={stages} timings={done ? scan.timings_ms : undefined} />
-      {error && <p className="text-verified">{error}</p>}
+      {error && <p className="rounded-lg bg-verified-soft px-4 py-2 text-verified">{error}</p>}
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] items-start 2xl:min-h-0">
         <div className="lg:sticky lg:top-0 grid gap-3">
           {tracking ? <TrackPlayer scan={scan} hazard={tracking} onClose={() => setTracking(null)} /> : <FrameViewer scan={scan} selected={selected} />}
           {done && (
-            <p className="text-base text-muted">
-              {counts.verified} hazard{counts.verified === 1 ? '' : 's'} confirmed on camera
-              {counts.needs_check ? `, ${counts.needs_check} to check in person` : ''}.
-            </p>
+            <div className="settle grid grid-cols-3 gap-2">
+              <Stat n={counts.verified} label="confirmed on camera" cls="text-verified" />
+              <Stat n={counts.rejected} label="AI claims dropped" cls="text-muted" />
+              <Stat n={counts.needs_check} label="to check in person" cls="text-check" />
+            </div>
           )}
         </div>
         <div className="2xl:h-full 2xl:min-h-0 2xl:overflow-y-auto no-scrollbar 2xl:pb-2">
@@ -105,6 +109,15 @@ export function Review() {
       </div>
 
       {preview && <FixPreviewDialog hazard={preview} onClose={() => setPreview(null)} />}
+    </div>
+  )
+}
+
+function Stat({ n, label, cls }: { n: number; label: string; cls: string }) {
+  return (
+    <div className="card px-3.5 py-2.5">
+      <div className={`font-display text-3xl leading-none tabular-nums ${cls}`}>{n}</div>
+      <div className="mt-1 text-sm text-muted leading-tight">{label}</div>
     </div>
   )
 }

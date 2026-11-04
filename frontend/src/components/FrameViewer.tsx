@@ -25,11 +25,11 @@ export function FrameViewer({ scan, selected }: Props) {
 
   if (showVideo) {
     return (
-      <div className="rounded-lg overflow-hidden bg-black border border-line">
+      <div className="media">
         <div className="relative aspect-video">
           <video ref={videoRef} src={scan.video_url} controls className="absolute inset-0 w-full h-full object-contain" />
         </div>
-        <div className="px-4 py-2 text-muted text-base border-t border-line">Pick a hazard to see where it is.</div>
+        <div className="px-4 py-2.5 text-white/60 text-sm bg-[#1a1713]">Pick a hazard to see where it is.</div>
       </div>
     )
   }

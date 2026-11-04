@@ -81,7 +81,7 @@ export function TrackPlayer({ scan, hazard, onClose }: Props) {
   const score = live[0]?.score
 
   return (
-    <div className="rounded-lg overflow-hidden bg-black border border-line">
+    <div className="media">
       <div ref={boxRef} className="relative aspect-video">
         {hasVideo ? (
           <video ref={videoRef} src={scan.video_url} controls muted className="absolute inset-0 w-full h-full object-contain" />
@@ -90,15 +90,15 @@ export function TrackPlayer({ scan, hazard, onClose }: Props) {
         ) : null}
         <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
         {!track && !error && (
-          <div className="absolute inset-0 grid place-items-center bg-ink/60 text-text">SAM 3.1 is tracking "{hazard.phrase}" through the video…</div>
+          <div className="absolute inset-0 grid place-items-center bg-black/60 text-white">SAM 3.1 is tracking "{hazard.phrase}" through the video…</div>
         )}
-        {error && <div className="absolute inset-0 grid place-items-center bg-ink/60 text-verified px-6 text-center">Tracking failed. {error}</div>}
+        {error && <div className="absolute inset-0 grid place-items-center bg-black/60 text-[#ff8a85] px-6 text-center">Tracking failed. {error}</div>}
       </div>
-      <div className="flex items-baseline justify-between gap-3 px-4 py-2 text-muted text-base border-t border-line">
-        <span className="text-text">SAM 3.1 following "{hazard.phrase}"</span>
+      <div className="flex items-baseline justify-between gap-3 px-4 py-2.5 text-white/60 text-sm bg-[#1a1713]">
+        <span className="text-white font-medium">SAM 3.1 following "{hazard.phrase}"</span>
         <span className="flex items-baseline gap-3">
           <span className="tabular-nums">{fmt(t)}{score != null ? ` · ${Math.round(score * 100)}%` : ''}{live.length === 0 && track ? ' · out of view' : ''}</span>
-          <button type="button" onClick={onClose} className="underline underline-offset-4 hover:text-text">Back to frame</button>
+          <button type="button" onClick={onClose} className="underline underline-offset-4 hover:text-white">Back to frame</button>
         </span>
       </div>
     </div>

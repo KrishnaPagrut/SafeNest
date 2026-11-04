@@ -6,14 +6,16 @@ interface Props { beforeUrl: string; afterUrl: string; beforeLabel?: string; aft
 export function BeforeAfter({ beforeUrl, afterUrl, beforeLabel = 'Now', afterLabel = 'Fixed' }: Props) {
   const [pos, setPos] = useState(50)
   return (
-    <div className="relative aspect-video rounded-lg overflow-hidden bg-black border border-line select-none">
+    <div className="relative aspect-video media select-none">
       <img src={afterUrl} alt={afterLabel} className="absolute inset-0 w-full h-full object-contain" />
       <div className="absolute inset-0 overflow-hidden" style={{ width: `${pos}%` }}>
         <img src={beforeUrl} alt={beforeLabel} className="absolute inset-0 h-full object-contain" style={{ width: `${10000 / pos}%`, maxWidth: 'none' }} />
       </div>
-      <div className="absolute top-0 bottom-0 w-0.5 bg-text" style={{ left: `${pos}%` }} aria-hidden />
-      <span className="absolute left-3 top-3 rounded bg-ink/80 px-2 py-0.5 text-base">{beforeLabel}</span>
-      <span className="absolute right-3 top-3 rounded bg-ink/80 px-2 py-0.5 text-base">{afterLabel}</span>
+      <div className="absolute top-0 bottom-0 w-0.5 bg-white shadow-[0_0_12px_rgba(0,0,0,.5)]" style={{ left: `${pos}%` }} aria-hidden>
+        <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 grid h-9 w-9 place-items-center rounded-full bg-white text-[#1f1a14] shadow-lg text-sm font-bold">⇆</span>
+      </div>
+      <span className="absolute left-3 top-3 media-tag">{beforeLabel}</span>
+      <span className="absolute right-3 top-3 media-tag bg-fixed/90">{afterLabel}</span>
       <input
         type="range" min={0} max={100} value={pos} onChange={(e) => setPos(Number(e.target.value))}
         aria-label="Reveal the fixed room"

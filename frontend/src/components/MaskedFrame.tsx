@@ -73,20 +73,20 @@ export function MaskedFrame({ frame, evidence, tone = 'verified', stamp, caption
   }, [frame, evidence, tone, size])
 
   return (
-    <div className={`rounded-lg overflow-hidden bg-black border border-line ${className}`}>
+    <div className={`media ${className}`}>
       <div ref={boxRef} className="relative aspect-video">
         {frame ? (
           <img src={frame.url} alt={`Keyframe at ${frame.t_sec}s`} className="absolute inset-0 w-full h-full object-contain" />
         ) : (
-          <div className="absolute inset-0 grid place-items-center text-muted">No frame yet</div>
+          <div className="absolute inset-0 grid place-items-center text-white/50">No frame yet</div>
         )}
         <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
         {stamp && (
-          <span className="absolute left-3 bottom-3 rounded bg-ink/85 border border-line px-2 py-0.5 text-base">{stamp}</span>
+          <span className="absolute left-3 bottom-3 media-tag font-mono ring-1 ring-white/15">{stamp}</span>
         )}
       </div>
       {caption !== undefined && (
-        <div className="flex items-baseline justify-between gap-3 px-4 py-2 text-muted text-base border-t border-line">{caption}</div>
+        <div className="flex items-baseline justify-between gap-3 px-4 py-2.5 text-white/60 text-sm bg-[#1a1713] [&_.text-text]:text-white [&_.text-text]:font-medium">{caption}</div>
       )}
     </div>
   )

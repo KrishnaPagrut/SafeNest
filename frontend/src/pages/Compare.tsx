@@ -2,12 +2,13 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { api } from '../api'
 import { fmt, MaskedFrame, nearestFrame } from '../components/MaskedFrame'
+import { Icon } from '../components/ui'
 import type { Comparison, Scan } from '../types'
 
 const STATUS = {
-  fixed: { label: 'Fixed', cls: 'bg-fixed text-ink' },
-  still_present: { label: 'Still there', cls: 'bg-amber text-ink' },
-  new: { label: 'New', cls: 'bg-verified text-text' },
+  fixed: { label: 'Fixed', cls: 'bg-fixed-soft text-fixed', icon: 'check' },
+  still_present: { label: 'Still there', cls: 'bg-amber-soft text-[#8a5a0c]', icon: 'eye' },
+  new: { label: 'New', cls: 'bg-verified-soft text-verified', icon: 'spark' },
 } as const
 
 export function Compare() {
@@ -51,7 +52,7 @@ export function Compare() {
     }
   }, [sel, cmp, before, after, t])
 
-  if (error) return <p className="text-verified">Could not compare these walkthroughs. {error}</p>
+  if (error) return <p className="rounded-lg bg-verified-soft px-4 py-3 text-verified">Couldn't compare these walkthroughs. {error}</p>
   if (!cmp || !before || !after) return <p className="text-muted">Comparing…</p>
 
   const fixed = cmp.items.filter((i) => i.status === 'fixed').length
@@ -62,17 +63,19 @@ export function Compare() {
     <div className="grid gap-8">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl md:text-4xl font-medium leading-tight">What changed after the fixes</h1>
-          <p className="mt-2 text-muted max-w-[70ch]">
-            {fixed} of {cmp.items.length} hazards are gone. Risk score went from {cmp.score_before} to {cmp.score_after}
-            {drop > 0 ? `, down ${drop}%` : ''}.
-            <span className="block text-base mt-1">Risk score adds the severity of every hazard still present: 3 for fix today, 2 for this week, 1 for worth fixing.</span>
+          <span className="eyebrow">Before vs. after</span>
+          <h1 className="mt-1 text-3xl md:text-[2.6rem] font-medium leading-tight">What changed after the fixes</h1>
+          <p className="mt-2 text-lg max-w-[60ch]">
+            <span className="font-medium">{fixed} of {cmp.items.length} hazards are gone.</span>{' '}
+            <span className="text-muted">Risk score went from {cmp.score_before} to {cmp.score_after}{drop > 0 ? `, down ${drop}%` : ''}.</span>
           </p>
+          <p className="mt-1 text-sm text-muted max-w-[70ch]">Risk score adds the severity of every hazard still present: 3 for fix today, 2 for this week, 1 for worth fixing.</p>
         </div>
-        <div className="flex items-baseline gap-6">
-          <Score label="Before" value={cmp.score_before} />
-          <span className="text-muted text-2xl" aria-hidden>→</span>
-          <Score label="After" value={cmp.score_after} />
+        <div className="card flex items-center gap-5 px-6 py-4">
+          <Score label="Before" value={cmp.score_before} cls="text-verified" />
+          <Icon name="arrow" className="h-6 w-6 text-muted" />
+          <Score label="After" value={cmp.score_after} cls="text-fixed" />
+          {drop > 0 && <span className="chip bg-fixed-soft text-fixed text-base">−{drop}%</span>}
         </div>
       </header>
 
@@ -89,46 +92,46 @@ export function Compare() {
               caption={<><span className="text-text">After</span><span>{view.af ? fmt(view.af.t_sec) : ''}{view.aEv.length ? ' · still detected' : ''}</span></>}
             />
           </div>
-          <label className="flex items-center gap-3 text-base text-muted">
-            <span className="tabular-nums w-10">{fmt(t)}</span>
+          <label className="card flex items-center gap-3 px-4 py-2.5 text-sm text-muted">
+            <span className="tabular-nums w-10 font-mono">{fmt(t)}</span>
             <input type="range" min={0} max={Math.max(1, Math.floor(maxT))} step={1} value={t} onChange={(e) => setT(Number(e.target.value))}
-              aria-label="Scrub both walkthroughs" className="flex-1 accent-[#f2ece2]" />
-            <span className="tabular-nums w-10 text-right">{fmt(maxT)}</span>
+              aria-label="Scrub both walkthroughs" className="flex-1 accent-[#1e4b3a]" />
+            <span className="tabular-nums w-10 text-right font-mono">{fmt(maxT)}</span>
           </label>
         </section>
       )}
 
-      <ul className="grid gap-2">
+      <ul className="grid gap-2 -mt-2">
         {cmp.items.map((it, i) => {
           const s = STATUS[it.status]
           const active = i === sel
           return (
             <li key={i}>
               <button type="button" onClick={() => pick(i)}
-                className={['w-full text-left flex flex-wrap items-center gap-3 rounded-md border px-4 py-3', active ? 'border-text bg-surface-2' : 'border-line bg-surface hover:bg-surface-2'].join(' ')}>
-                <span className={`rounded px-2 py-0.5 text-base font-medium ${s.cls}`}>{s.label}</span>
+                className={['w-full text-left flex flex-wrap items-center gap-3 rounded-xl border bg-surface px-4 py-3 transition-all', active ? 'border-text/70 shadow-[var(--shadow-lift)]' : 'border-line hover:border-text/25'].join(' ')}>
+                <span className={`chip w-28 justify-center ${s.cls}`}><Icon name={s.icon} className="h-3.5 w-3.5" strokeWidth={2.4} />{s.label}</span>
                 <span className="font-medium">{it.title}</span>
-                <span className="text-muted text-base basis-full md:basis-auto md:ml-auto">{it.note}</span>
+                <span className="text-muted text-sm basis-full md:basis-auto md:ml-auto">{it.note}</span>
               </button>
             </li>
           )
         })}
       </ul>
 
-      <div className="flex gap-3">
-        <Link to={`/report/${after.scan_id}`} className="rounded-md bg-text text-ink px-4 py-2 font-medium">Make the report</Link>
-        <Link to={`/review/${before.scan_id}`} className="rounded-md border border-line px-4 py-2 hover:bg-surface-2">Before review</Link>
-        <Link to={`/review/${after.scan_id}`} className="rounded-md border border-line px-4 py-2 hover:bg-surface-2">After review</Link>
+      <div className="flex flex-wrap gap-2">
+        <Link to={`/report/${after.scan_id}`} className="btn-primary"><Icon name="doc" className="h-4 w-4" /> Make the report</Link>
+        <Link to={`/review/${before.scan_id}`} className="btn-ghost">Before review</Link>
+        <Link to={`/review/${after.scan_id}`} className="btn-ghost">After review</Link>
       </div>
     </div>
   )
 }
 
-function Score({ label, value }: { label: string; value: number }) {
+function Score({ label, value, cls }: { label: string; value: number; cls: string }) {
   return (
-    <div className="text-right">
-      <div className="text-4xl font-medium tabular-nums leading-none">{value}</div>
-      <div className="text-base text-muted">{label} risk</div>
+    <div className="text-center">
+      <div className={`font-display text-5xl font-medium tabular-nums leading-none ${cls}`}>{value}</div>
+      <div className="mt-1 text-sm text-muted">{label} risk</div>
     </div>
   )
 }
