@@ -1,5 +1,7 @@
 # SafeNest
 
+[![CI](https://github.com/KrishnaPagrut/SafeNest/actions/workflows/ci.yml/badge.svg)](https://github.com/KrishnaPagrut/SafeNest/actions/workflows/ci.yml)
+
 **Film a 30-second walk through your parent's home. SafeNest finds the fall hazards, proves each one with pixels,
 shows the family what the fixed room looks like, and confirms the fixes when you film again.**
 
@@ -50,6 +52,7 @@ cd backend && uv sync && uv run uvicorn app.main:app --port 8000
 cd frontend && npm install && npm run dev     # http://localhost:5173
 ```
 
+- `make check` runs what CI runs: ruff, pytest, oxlint, Prettier and the frontend build. `make fmt` formats both sides.
 - `make test` runs the offline end-to-end test (real ffmpeg + API, model calls stubbed).
 - `make demo` replays the recorded demo from the response cache with zero network
   (`SAFENEST_CACHE_ONLY=1`).
